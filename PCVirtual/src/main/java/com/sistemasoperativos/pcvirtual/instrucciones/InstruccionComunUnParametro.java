@@ -13,8 +13,8 @@ import java.util.Map;
  */
 public class InstruccionComunUnParametro extends InstruccionComun{
     
-    public InstruccionComunUnParametro(Map<String, String> registros, Conversor conversor) {
-        super(registros, conversor);
+    public InstruccionComunUnParametro(Map<String, String> registros, Conversor conversor, int peso) {
+        super(registros, conversor, peso);
     }
     
     @Override

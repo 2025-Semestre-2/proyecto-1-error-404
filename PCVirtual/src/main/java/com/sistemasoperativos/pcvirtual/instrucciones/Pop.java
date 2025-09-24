@@ -16,13 +16,14 @@ public class Pop extends InstruccionComunUnParametro implements Instruccion{
 
     BUS Bus;
 
-    public Pop(Map<String, String> registros, Conversor conversor, BUS bus) {
-        super(registros, conversor);
+    public Pop(Map<String, String> registros, Conversor conversor, int peso, BUS bus) {
+        super(registros, conversor, peso);
         Bus = bus;
     }
 
     @Override
     public void EjecutarInstruccion(String instruccion) throws Exception {
+        AplicarPeso();
         Desestructurar(instruccion);
         String direccion = Registros.get("01000");
         int nuevaDireccion = ConversorAsignado.ConvertirBitsAInteger(direccion) - 1;

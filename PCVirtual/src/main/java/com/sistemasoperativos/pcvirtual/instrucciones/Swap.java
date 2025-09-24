@@ -13,12 +13,13 @@ import java.util.Map;
  */
 public class Swap extends InstruccionComunDosParametros implements Instruccion{
 
-    public Swap(Map<String, String> registros, Conversor conversor) {
-        super(registros, conversor);
+    public Swap(Map<String, String> registros, Conversor conversor, int peso) {
+        super(registros, conversor, peso);
     }
 
     @Override
     public void EjecutarInstruccion(String instruccion) throws Exception {
+        AplicarPeso();
         Desestructurar(instruccion);
         String dato1 = Registros.get(Param1);
         String dato2 = Registros.get(Param2);

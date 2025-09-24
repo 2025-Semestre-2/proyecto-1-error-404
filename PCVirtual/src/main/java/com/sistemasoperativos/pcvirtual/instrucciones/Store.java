@@ -16,13 +16,14 @@ public class Store extends InstruccionComunUnParametro implements Instruccion{
     
     BUS Bus;
 
-    public Store(Map<String, String> registros, Conversor conversor, BUS bus) {
-        super(registros, conversor);
+    public Store(Map<String, String> registros, Conversor conversor, int peso, BUS bus) {
+        super(registros, conversor, peso);
         Bus = bus;
     }
 
     @Override
     public void EjecutarInstruccion(String instruccion) throws Exception {
+        AplicarPeso();
         Desestructurar(instruccion);
         String dato = Registros.get("00001");
         String direccion = Registros.get(Param1);

@@ -15,10 +15,22 @@ public abstract class InstruccionComun {
     protected Map<String, String> Registros;
     protected Conversor ConversorAsignado;
     protected String Param1;
+    private int Peso;
+    private int Contador;
     
-    public InstruccionComun(Map<String, String> registros, Conversor conversor){
+    public InstruccionComun(Map<String, String> registros, Conversor conversor, int peso){
         Registros = registros;
         ConversorAsignado = conversor;
+        Peso = peso;
+        Contador = 0;
+    }
+    
+    protected void AplicarPeso(){
+        Contador++;
+        if(Contador != Peso){
+            return;
+        }
+        Contador = 0;
     }
     
     protected void IrSiguienteInstruccion(){
@@ -29,4 +41,8 @@ public abstract class InstruccionComun {
     }
     
     protected abstract void Desestructurar(String lineaBinaria);
+    
+    public int ObtenerPeso(){
+        return Peso;
+    }
 }

@@ -16,13 +16,14 @@ public class Int extends InstruccionComunUnParametro implements Instruccion{
     
     BUSPantalla BusPantalla;
 
-    public Int(Map<String, String> registros, Conversor conversor, BUSPantalla busPantalla) {
-        super(registros, conversor);
+    public Int(Map<String, String> registros, Conversor conversor, int peso,BUSPantalla busPantalla) {
+        super(registros, conversor, peso);
         BusPantalla = busPantalla;
     }
 
     @Override
     public void EjecutarInstruccion(String instruccion) throws Exception {
+        AplicarPeso();
         Desestructurar(instruccion);
         if(Param1.equals("00000")){
             BusPantalla.Leer();

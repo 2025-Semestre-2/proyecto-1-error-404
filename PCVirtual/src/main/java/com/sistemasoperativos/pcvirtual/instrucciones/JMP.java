@@ -13,12 +13,13 @@ import java.util.Map;
  */
 public class JMP extends InstruccionComunUnParametro implements Instruccion{
 
-    public JMP(Map<String, String> registros, Conversor conversor) {
-        super(registros, conversor);
+    public JMP(Map<String, String> registros, Conversor conversor, int peso) {
+        super(registros, conversor, peso);
     }
 
     @Override
     public void EjecutarInstruccion(String instruccion) throws Exception {
+        AplicarPeso();
         Desestructurar(instruccion);
         String siguienteInstruccion = Registros.get("00000");
         int siguienteInstruccionEntero = ConversorAsignado.ConvertirBitsAInteger(siguienteInstruccion);
