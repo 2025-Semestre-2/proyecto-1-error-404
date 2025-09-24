@@ -4,4 +4,5 @@ module com.sistemasoperativos.pcvirtual {
     exports com.sistemasoperativos.pcvirtual.gui;
     exports com.sistemasoperativos.pcvirtual.componentes;
     exports com.sistemasoperativos.pcvirtual.instrucciones;
+    requires javacup;
 }
