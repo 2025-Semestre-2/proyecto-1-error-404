@@ -13,6 +13,8 @@ import java.util.Map;
  */
 public class CPUModelo2 implements CPU{
     
+    private Map<String, Instruccion> Instrucciones;
+    
     /**
      * PC = 00000
      * AC = 00001
@@ -24,26 +26,48 @@ public class CPUModelo2 implements CPU{
      * CP = 00111
      * SP = 01000
      */
-    Map<String, Instruccion> Instrucciones;
+    private Map<String, String> Registros;
     
+    private BUS BUSAsignado;
+    
+    private int ContadorPeso;
     
     public CPUModelo2(Map<String, Instruccion> instrucciones, Map<String, String> registros){
         Instrucciones = instrucciones;
+        Registros = registros;
     }
     
+    @Override
     public void EjecutarInstruccion() throws Exception {
-        
+        String instruccionBits = Registros.get("00010").substring(0, 5);
+        if(!Instrucciones.containsKey(instruccionBits)){
+            throw new Exception("La instrucción " + instruccionBits + " no existe");
+        }
+        Instruccion instruccion = Instrucciones.get(instruccionBits);
+        instruccion.EjecutarInstruccion(instruccionBits);
     }
     
+    @Override
     public boolean EscribirRegistro(String informacion)throws Exception{
-        
+        String registro = informacion.substring(0, 5);
+        if(!Registros.containsKey(registro)){
+            throw new Exception("El registro " + registro + " no existe.");
+        }
+        String dato = informacion.substring(5);
+        Registros.put(registro, dato);
+        return true;
     }
     
+    @Override
     public String LeerRegistro(String informacion) throws Exception{
-        
+        if(!Registros.containsKey(informacion)){
+            throw new Exception("El registro " + informacion + " no existe.");
+        }
+        return Registros.get(informacion);
     }
     
+    @Override
     public void AsignarBUS(BUS busAsignado) throws Exception{
-        
+        BUSAsignado = busAsignado;
     }
 }

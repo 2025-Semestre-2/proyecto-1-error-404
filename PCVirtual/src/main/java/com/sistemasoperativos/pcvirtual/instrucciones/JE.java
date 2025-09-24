@@ -13,17 +13,23 @@ import java.util.Map;
  */
 public class JE extends JMP implements Instruccion{
 
-    public JE(Map<String, String> registros, Conversor conversor) {
-        super(registros, conversor);
+    public JE(Map<String, String> registros, Conversor conversor, int peso) {
+        super(registros, conversor, peso);
     }
 
     @Override
     public void EjecutarInstruccion(String instruccion) throws Exception {
+        AplicarPeso();
         Desestructurar(instruccion);
         String banderaBits = Registros.get("00111");
         int bandera = ConversorAsignado.ConvertirBitsAInteger(banderaBits);
         if(bandera == 1){
-            super.EjecutarInstruccion(instruccion);
+            String siguienteInstruccion = Registros.get("00000");
+            int siguienteInstruccionEntero = ConversorAsignado.ConvertirBitsAInteger(siguienteInstruccion);
+            int desplazamiento = ConversorAsignado.ConvertirBitsAInteger(Param1);
+            int direccionDesplazada = siguienteInstruccionEntero + desplazamiento;
+            String bitsDesplazamiento = ConversorAsignado.ConvertirIntegerABits(direccionDesplazada);
+            Registros.put("00000", bitsDesplazamiento);
         }
         else{
             IrSiguienteInstruccion();

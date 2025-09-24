@@ -13,12 +13,13 @@ import java.util.Map;
  */
 public class Add extends InstruccionComunUnParametro implements Instruccion {
 
-    public Add(Map<String, String> registros, Conversor conversor) {
-        super(registros, conversor);
+    public Add(Map<String, String> registros, Conversor conversor, int peso) {
+        super(registros, conversor, peso);
     }
 
     @Override
     public void EjecutarInstruccion(String instruccion) throws Exception {
+        AplicarPeso();
         Desestructurar(instruccion);
         String param1 = Registros.get("00001");
         int num1 = ConversorAsignado.ConvertirBitsAInteger(param1);

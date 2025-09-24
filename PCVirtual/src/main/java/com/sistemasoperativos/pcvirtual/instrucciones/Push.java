@@ -16,13 +16,14 @@ public class Push extends InstruccionComunUnParametro implements Instruccion{
     
     BUS BUSAsignado;
 
-    public Push(Map<String, String> registros, Conversor conversor, BUS bus) {
-        super(registros, conversor);
+    public Push(Map<String, String> registros, Conversor conversor, int peso, BUS bus) {
+        super(registros, conversor, peso);
         BUSAsignado = bus;
     }
 
     @Override
     public void EjecutarInstruccion(String instruccion) throws Exception {
+        AplicarPeso();
         Desestructurar(instruccion);
         String dato = Registros.get(Param1);
         String direccion = Registros.get("01000");
