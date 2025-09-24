@@ -4,10 +4,12 @@
  */
 package com.sistemasoperativos.pcvirtual.compilador;
 
+import java.util.List;
+
 /**
  *
  * @author andrewdeni
  */
 public interface Compilador {
-    public String Compilar(String ensamblador) throws Exception;
+    public List<String> Compilar(String direccion) throws Exception;
 }

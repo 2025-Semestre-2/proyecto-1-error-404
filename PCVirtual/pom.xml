@@ -33,7 +33,11 @@
             <artifactId>javafx-fxml</artifactId>
             <version>13</version>
         </dependency>
-
+        <dependency>
+            <groupId>javacup</groupId>
+            <artifactId>javacup</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
 
     <build>

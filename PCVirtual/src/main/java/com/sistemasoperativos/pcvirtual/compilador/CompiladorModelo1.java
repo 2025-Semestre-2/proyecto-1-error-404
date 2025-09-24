@@ -4,15 +4,28 @@
  */
 package com.sistemasoperativos.pcvirtual.compilador;
 
+import java.io.FileReader;
+import java.util.List;
+
 /**
  *
  * @author andrewdeni
  */
 public class CompiladorModelo1 implements Compilador{
+    
+    
+    public CompiladorModelo1(){
+        
+    }
 
     @Override
-    public String Compilar(String ensamblador) throws Exception {
-        return "";
+    public List<String> Compilar(String direccion) throws Exception {
+        MiLexer lexer = new MiLexer(new FileReader(direccion));
+        Parser parser = new Parser(lexer);
+        if(parser.VerificarSiHayError()){
+            throw new Exception(parser.ObtenerMensajeError());
+        }
+        return parser.getInstruccionesBinarias();
     }
     
 }
