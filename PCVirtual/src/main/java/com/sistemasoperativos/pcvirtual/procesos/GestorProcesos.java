@@ -20,7 +20,7 @@ public class GestorProcesos {
     }
 
     // Crear proceso y mandarlo a la cola de listos
-    public void crearProceso(int id, String nombre, int prioridad, int base, int limite) {
+    public void crearProceso(int id, String nombre, int prioridad, String base, String limite) {
         BCP bcp = new BCP(id, nombre, prioridad, base, limite);
         bcp.marcarNuevo();
         planificador.agregarProceso(bcp);
