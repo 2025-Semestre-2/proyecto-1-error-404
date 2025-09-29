@@ -14,31 +14,28 @@ public class GestorProcesos {
     private final Planificador planificador;
     private BCP procesoActual;
 
-    public GestorProcesos() {
-        this.planificador = new Planificador();
+    public GestorProcesos(Planificador planificador) {
+        this.planificador = planificador;
         this.procesoActual = null;
     }
 
     // Crear proceso y mandarlo a la cola de listos
-    public void crearProceso(int id, String nombre, int prioridad, String base, String limite) {
-        BCP bcp = new BCP(id, nombre, prioridad, base, limite);
-        bcp.marcarNuevo();
+    public void crearProceso(int id, String nombre, int prioridad) {
+        BCP bcp = new BCP(id, nombre, prioridad);
+        bcp.marcarPreparado();
         planificador.agregarProceso(bcp);
     }
 
     // Despacho (cambio de contexto)
-    public void despachar() {
-        if (procesoActual != null) {
-            procesoActual.marcarPreparado();
-            planificador.agregarProceso(procesoActual);
-        }
+    public void despachar() throws Exception {
+        finalizarActual();
         procesoActual = planificador.obtenerSiguiente();
         if (procesoActual != null) {
             procesoActual.marcarEjecucion();
         }
     }
 
-    public void finalizarActual() {
+    private void finalizarActual() {
         if (procesoActual != null) {
             procesoActual.marcarFinalizado();
             procesoActual = null;

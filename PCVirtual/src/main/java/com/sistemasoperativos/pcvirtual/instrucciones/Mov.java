@@ -14,13 +14,14 @@ import java.util.Map;
 public class Mov extends InstruccionComunDosParametros implements Instruccion{
 
     public Mov(Map<String, String> registros, Conversor conversor, int peso) {
-        super(registros, conversor, peso);
+        super(conversor, peso);
     }
 
     
 
     @Override
-    public void EjecutarInstruccion(String instruccion) throws Exception {
+    public void EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception {
+        Registros = registros;
         AplicarPeso();
         Desestructurar(instruccion);
         if(Param2.length() == 8){

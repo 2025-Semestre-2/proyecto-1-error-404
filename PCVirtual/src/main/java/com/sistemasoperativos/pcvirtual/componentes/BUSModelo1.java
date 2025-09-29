@@ -7,6 +7,7 @@ package com.sistemasoperativos.pcvirtual.componentes;
 import com.sistemasoperativos.pcvirtual.componentes.BUS;
 import com.sistemasoperativos.pcvirtual.componentes.CPU;
 import com.sistemasoperativos.pcvirtual.componentes.RAM;
+import java.util.Map;
 
 /**
  * Implementación del BUS de la computadora virtual.
@@ -65,11 +66,11 @@ public class BUSModelo1 implements BUS {
      * @throws Exception Si la CPU no está disponible o si ocurre un error al escribir el dato.
      */
     @Override
-    public void EscribirDatoCPU(String informacion) throws Exception {
+    public void AsignarRegistrosCPU(Map<String, String> registros) throws Exception {
         if (CPUInstalado == null){
             throw new Exception("CPU no está disponible");
         }
-        CPUInstalado.EscribirRegistro(informacion);
+        CPUInstalado.CambiarRegistros(registros);
     }
 
     /**
@@ -80,11 +81,11 @@ public class BUSModelo1 implements BUS {
      * @throws Exception Si la CPU no está disponible o si ocurre un error al leer el dato.
      */
     @Override
-    public String LeerDatoCPU(String informacion) throws Exception {
+    public Map<String, String> ObtenerRegistrosCPU() throws Exception {
         if (CPUInstalado == null){
             throw new Exception("CPU no está disponible");
         }
-        return CPUInstalado.LeerRegistro(informacion);
+        return CPUInstalado.ObtenerRegistros();
     }
 
     /**

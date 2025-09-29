@@ -13,12 +13,13 @@ import java.util.Map;
  */
 public class Dec extends InstruccionComunUnParametro implements Instruccion{
 
-    public Dec(Map<String, String> registros, Conversor conversor, int peso) {
-        super(registros, conversor, peso);
+    public Dec(Conversor conversor, int peso) {
+        super(conversor, peso);
     }
 
     @Override
-    public void EjecutarInstruccion(String instruccion) throws Exception {
+    public void EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception {
+        Registros = registros;
         AplicarPeso();
         if(instruccion.length() == 5){
             String dato = Registros.get("00001");

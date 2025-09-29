@@ -4,6 +4,8 @@
  */
 package com.sistemasoperativos.pcvirtual.componentes;
 
+import java.util.Map;
+
 /**
  * Interfaz para el BUS de la computadora virtual.
  *
@@ -12,7 +14,7 @@ package com.sistemasoperativos.pcvirtual.componentes;
 public interface BUS {
     public void EscribirDatoRAM(String direccion, String dato) throws Exception;
     public String LeerDatoRAM(String direccion) throws Exception;
-    public void EscribirDatoCPU(String informacion) throws Exception;
-    public String LeerDatoCPU(String informacion) throws Exception;
+    public void AsignarRegistrosCPU(Map<String, String> registros) throws Exception;
+    public Map<String, String> ObtenerRegistrosCPU() throws Exception;
     public void EjecutarInstruccionCPU() throws Exception;
 }

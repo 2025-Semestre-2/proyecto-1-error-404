@@ -34,7 +34,7 @@ public class CPUModelo2 implements CPU{
     
     public CPUModelo2(Map<String, Instruccion> instrucciones, Map<String, String> registros){
         Instrucciones = instrucciones;
-        Registros = registros;
+        Registros = null;
     }
     
     @Override
@@ -44,26 +44,17 @@ public class CPUModelo2 implements CPU{
             throw new Exception("La instrucción " + instruccionBits + " no existe");
         }
         Instruccion instruccion = Instrucciones.get(instruccionBits);
-        instruccion.EjecutarInstruccion(instruccionBits);
+        instruccion.EjecutarInstruccion(instruccionBits, Registros);
     }
     
     @Override
-    public boolean EscribirRegistro(String informacion)throws Exception{
-        String registro = informacion.substring(0, 5);
-        if(!Registros.containsKey(registro)){
-            throw new Exception("El registro " + registro + " no existe.");
-        }
-        String dato = informacion.substring(5);
-        Registros.put(registro, dato);
-        return true;
+    public void CambiarRegistros(Map<String, String> registros) {
+        Registros = registros;
     }
     
     @Override
-    public String LeerRegistro(String informacion) throws Exception{
-        if(!Registros.containsKey(informacion)){
-            throw new Exception("El registro " + informacion + " no existe.");
-        }
-        return Registros.get(informacion);
+    public Map<String, String> ObtenerRegistros(){
+        return Registros;
     }
     
     @Override

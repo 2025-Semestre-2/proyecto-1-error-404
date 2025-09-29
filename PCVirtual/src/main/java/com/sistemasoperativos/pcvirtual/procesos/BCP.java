@@ -1,31 +1,19 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.sistemasoperativos.pcvirtual.procesos;
 
-/**
- *
- * @author males
- */
-
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BCP {
+
     private final int id;
     private final String nombre;
     private final int prioridad;
     private EstadoBCP estado;
 
     // -------- Registros --------
-    private String PC;   // Contador de programa
-    private String AC;   // Acumulador
-    private String AX, BX, CX, DX; // otros registros
-    private String IR;   // Registro de instrucción
-
-    // -------- Pila --------
-    private String SP; // stack pointer
+    private final Map<String, String> registros; // PC, AC, IR, AX, BX, CX, DX, SP, CP, BS, LI
 
     // -------- Información contable --------
     private String cpuAsignado;
@@ -38,27 +26,30 @@ public class BCP {
     // -------- Enlace al siguiente BCP (lista enlazada) --------
     private BCP siguiente;
 
-    // -------- Memoria --------
-    private String base;   // Dirección de inicio
-    private String limite; // Tamaño del proceso (alcance)
-
-    public BCP(int id, String nombre, int prioridad, String base, String limite) {
+    public BCP(int id, String nombre, int prioridad) {
         this.id = id;
         this.nombre = nombre;
         this.prioridad = prioridad;
-        this.base = base;
-        this.limite = limite;
         this.estado = EstadoBCP.NUEVO;
 
-        // Inicialización de registros
-        this.PC = "00000000";
-        this.AC = "00000000";
-        this.AX = "00000000";
-        this.BX = "00000000";
-        this.CX = "00000000";
-        this.DX = "00000000";
-        this.IR = "00000000";
-        this.SP = "00000000";
+        // Inicializar registros a "00000000"
+        this.registros = new HashMap<>();
+        String[] codigos = {
+            "00000", // PC
+            "00001", // AC
+            "00010", // IR
+            "00011", // AX
+            "00100", // BX
+            "00101", // CX
+            "00110", // DX
+            "00111", // CP
+            "01000", // SP
+            "01001", // BS
+            "01010" // LI
+        };
+        for (String c : codigos) {
+            registros.put(c, "00000000");
+        }
 
         // Info contable
         this.cpuAsignado = "CPU0"; // por defecto
@@ -72,6 +63,27 @@ public class BCP {
         this.siguiente = null;
     }
 
+    // -------- Métodos de cambio de estado -----------
+    public void marcarNuevo() {
+        this.estado = EstadoBCP.NUEVO;
+    }
+
+    public void marcarPreparado() {
+        this.estado = EstadoBCP.LISTO;
+    }
+
+    public void marcarEjecucion() {
+        this.estado = EstadoBCP.EJECUTANDO;
+    }
+
+    public void marcarEsperando() {
+        this.estado = EstadoBCP.ESPERANDO;
+    }
+
+    public void marcarFinalizado() {
+        this.estado = EstadoBCP.FINALIZADO;
+    }
+
     // ----------- Manejo de archivos ----------- 
     public void abrirArchivo(String nombreArchivo) {
         archivosAbiertos.add(nombreArchivo);
@@ -81,94 +93,117 @@ public class BCP {
         archivosAbiertos.remove(nombreArchivo);
     }
 
-    // ----------- Métodos de cambio de estado -----------
-    public void marcarNuevo() { this.estado = EstadoBCP.NUEVO; }
-    public void marcarPreparado() { this.estado = EstadoBCP.LISTO; }
-    public void marcarEjecucion() { this.estado = EstadoBCP.EJECUTANDO; }
-    public void marcarEsperando() { this.estado = EstadoBCP.ESPERANDO; }
-    public void marcarFinalizado() { this.estado = EstadoBCP.FINALIZADO; }
-
-    
-
-    @Override
-    public String toString() {
-        return "Proceso " + id + " [" + nombre + "] - Estado: " + estado +
-                " - PC=" + PC + " AC=" + AC + " AX=" + AX + " BX=" + BX +
-                " CX=" + CX + " DX=" + DX;
+    // ----------- Acceso a registros (Map) ----------- 
+    public Map<String, String> getRegistros() {
+        return registros;
     }
 
-    public EstadoBCP getEstado() {
-        return estado;
+    public String getRegistro(String codigo) {
+        return registros.get(codigo);
     }
 
-    public void setEstado(EstadoBCP estado) {
-        this.estado = estado;
+    public void setRegistro(String codigo, String valor) {
+        registros.put(codigo, valor);
     }
 
+    // ----------- Getters y Setters individuales de registros -----------
     public String getPC() {
-        return PC;
+        return registros.get("00000");
     }
 
-    public void setPC(String PC) {
-        this.PC = PC;
+    public void setPC(String valor) {
+        registros.put("00000", valor);
     }
 
     public String getAC() {
-        return AC;
+        return registros.get("00001");
     }
 
-    public void setAC(String AC) {
-        this.AC = AC;
+    public void setAC(String valor) {
+        registros.put("00001", valor);
     }
-
-    public String getAX() {
-        return AX;
+    
+    public String getBS(){
+        return registros.get("01001");
     }
-
-    public void setAX(String AX) {
-        this.AX = AX;
-    }
-
-    public String getBX() {
-        return BX;
-    }
-
-    public void setBX(String BX) {
-        this.BX = BX;
-    }
-
-    public String getCX() {
-        return CX;
-    }
-
-    public void setCX(String CX) {
-        this.CX = CX;
-    }
-
-    public String getDX() {
-        return DX;
-    }
-
-    public void setDX(String DX) {
-        this.DX = DX;
+    
+    public void setBS(String valor){
+        registros.put("01001", valor);
     }
 
     public String getIR() {
-        return IR;
+        return registros.get("00010");
     }
 
-    public void setIR(String IR) {
-        this.IR = IR;
+    public void setIR(String valor) {
+        registros.put("00010", valor);
+    }
+
+    public String getAX() {
+        return registros.get("00011");
+    }
+
+    public void setAX(String valor) {
+        registros.put("00011", valor);
+    }
+
+    public String getBX() {
+        return registros.get("00100");
+    }
+
+    public void setBX(String valor) {
+        registros.put("00100", valor);
+    }
+
+    public String getCX() {
+        return registros.get("00101");
+    }
+
+    public void setCX(String valor) {
+        registros.put("00101", valor);
+    }
+
+    public String getDX() {
+        return registros.get("00110");
+    }
+
+    public void setDX(String valor) {
+        registros.put("00110", valor);
+    }
+
+    public String getCP() {
+        return registros.get("00111");
+    }
+
+    public void setCP(String valor) {
+        registros.put("00111", valor);
     }
 
     public String getSP() {
-        return SP;
+        return registros.get("01000");
     }
 
-    public void setSP(String SP) {
-        this.SP = SP;
+    public void setSP(String valor) {
+        registros.put("01000", valor);
     }
 
+    public int getBase() {
+        return Integer.parseInt(registros.get("01001"));
+    }
+
+    public void setBase(String valor) {
+        registros.put("01001", valor);
+    }
+
+    public int getLimite() {
+        return Integer.parseInt(registros.get("01010"));
+    }
+
+    public void setLimite(String valor) {
+        registros.put("01010", valor);
+    }
+
+    // -------- Información contable ----------
     public String getCpuAsignado() {
         return cpuAsignado;
     }
@@ -193,6 +228,7 @@ public class BCP {
         this.tiempoEjecutado = tiempoEjecutado;
     }
 
+    // -------- Enlace a siguiente BCP ----------
     public BCP getSiguiente() {
         return siguiente;
     }
@@ -201,21 +237,17 @@ public class BCP {
         this.siguiente = siguiente;
     }
 
-    public String getBase() {
-        return base;
+    public EstadoBCP getEstado() {
+        return estado;
     }
 
-    public void setBase(String base) {
-        this.base = base;
+    public void setEstado(EstadoBCP estado) {
+        this.estado = estado;
     }
 
-    public String getLimite() {
-        return limite;
+    @Override
+    public String toString() {
+        return "Proceso " + id + " [" + nombre + "] - Estado: " + estado
+                + " - Registros=" + registros;
     }
-
-    public void setLimite(String limite) {
-        this.limite = limite;
-    }
-    
-    
 }

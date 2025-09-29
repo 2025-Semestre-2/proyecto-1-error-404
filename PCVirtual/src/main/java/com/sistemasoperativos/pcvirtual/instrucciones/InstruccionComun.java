@@ -18,8 +18,8 @@ public abstract class InstruccionComun {
     private int Peso;
     private int Contador;
     
-    public InstruccionComun(Map<String, String> registros, Conversor conversor, int peso){
-        Registros = registros;
+    public InstruccionComun(Conversor conversor, int peso){
+        Registros = null;
         ConversorAsignado = conversor;
         Peso = peso;
         Contador = 0;

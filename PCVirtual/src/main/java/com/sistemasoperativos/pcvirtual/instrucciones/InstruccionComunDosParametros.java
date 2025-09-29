@@ -15,8 +15,8 @@ public class InstruccionComunDosParametros extends InstruccionComun{
     
     protected String Param2;
 
-    public InstruccionComunDosParametros(Map<String, String> registros, Conversor conversor, int peso) {
-        super(registros, conversor, peso);
+    public InstruccionComunDosParametros(Conversor conversor, int peso) {
+        super(conversor, peso);
     }
 
     @Override

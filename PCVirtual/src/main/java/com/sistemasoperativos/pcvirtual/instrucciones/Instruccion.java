@@ -4,10 +4,12 @@
  */
 package com.sistemasoperativos.pcvirtual.instrucciones;
 
+import java.util.Map;
+
 /**
  *
  * @author andre
  */
 public interface Instruccion {
-    public void EjecutarInstruccion(String instruccion) throws Exception;
+    public void EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception;
 }

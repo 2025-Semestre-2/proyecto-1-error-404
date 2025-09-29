@@ -14,11 +14,12 @@ import java.util.Map;
 public class JE extends JMP implements Instruccion{
 
     public JE(Map<String, String> registros, Conversor conversor, int peso) {
-        super(registros, conversor, peso);
+        super(conversor, peso);
     }
 
     @Override
-    public void EjecutarInstruccion(String instruccion) throws Exception {
+    public void EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception {
+        Registros = registros;
         AplicarPeso();
         Desestructurar(instruccion);
         String banderaBits = Registros.get("00111");

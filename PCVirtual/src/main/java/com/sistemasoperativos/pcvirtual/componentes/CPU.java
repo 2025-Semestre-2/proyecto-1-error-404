@@ -4,6 +4,8 @@
  */
 package com.sistemasoperativos.pcvirtual.componentes;
 
+import java.util.Map;
+
 /**
  * Interfaz para la Unidad Central de Procesamiento (CPU) de la computadora virtual.
  *
@@ -11,7 +13,8 @@ package com.sistemasoperativos.pcvirtual.componentes;
  */
 public interface CPU {
     public void EjecutarInstruccion() throws Exception;
-    public boolean EscribirRegistro(String informacion)throws Exception;
-    public String LeerRegistro(String informacion) throws Exception;
+    public void CambiarRegistros(Map<String, String> registros);
+    public Map<String, String> ObtenerRegistros();
     public void AsignarBUS(BUS busAsignado) throws Exception;
+    
 }
