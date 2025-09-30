@@ -5,6 +5,7 @@
 package com.sistemasoperativos.pcvirtual.componentes;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -13,4 +14,5 @@ import java.util.List;
 public interface Almacenamiento {
     public String GuardarPrograma(List<String> programa) throws Exception; //Devuelve la dirección de guardado;
     public List<String> BuscarPrograma(String direccion) throws Exception; //Devuelve el programa en forma de lista de instrucciones binarias
+    public Map<String, String> TraerAlmacenamiento();
 }

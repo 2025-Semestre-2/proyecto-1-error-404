@@ -11,9 +11,9 @@ import java.util.Map;
  *
  * @author andre
  */
-public class Swap extends InstruccionComunDosParametros implements Instruccion{
+public class CMP extends InstruccionComunDosParametros implements Instruccion{
 
-    public Swap(Conversor conversor, int peso) {
+    public CMP(Conversor conversor, int peso) {
         super(conversor, peso);
     }
 
@@ -23,10 +23,16 @@ public class Swap extends InstruccionComunDosParametros implements Instruccion{
         if(AplicarPeso())
             return;
         Desestructurar(instruccion);
-        String dato1 = Registros.get(Param1);
-        String dato2 = Registros.get(Param2);
-        Registros.put(Param1, dato2);
-        Registros.put(Param2, dato1);
+        int num1 = ConversorAsignado.ConvertirBitsAInteger(Param1);
+        int num2 = ConversorAsignado.ConvertirBitsAInteger(Param2);
+        if(num1 == num2){
+            String bandera = ConversorAsignado.ConvertirIntegerABits(1);
+            registros.put("00111", bandera);
+        }
+        else{
+            String bandera = ConversorAsignado.ConvertirIntegerABits(0);
+            registros.put("00111", bandera);
+        }
         IrSiguienteInstruccion();
     }
     

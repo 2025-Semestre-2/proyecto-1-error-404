@@ -4,6 +4,7 @@
  */
 package com.sistemasoperativos.pcvirtual.compilador;
 
+import java.io.File;
 import java.io.FileReader;
 import java.util.List;
 
@@ -19,8 +20,8 @@ public class CompiladorModelo1 implements Compilador{
     }
 
     @Override
-    public List<String> Compilar(String direccion) throws Exception {
-        MiLexer lexer = new MiLexer(new FileReader(direccion));
+    public List<String> Compilar(File archivo) throws Exception {
+        MiLexer lexer = new MiLexer(new FileReader(archivo));
         Parser parser = new Parser(lexer);
         if(parser.VerificarSiHayError()){
             throw new Exception(parser.ObtenerMensajeError());

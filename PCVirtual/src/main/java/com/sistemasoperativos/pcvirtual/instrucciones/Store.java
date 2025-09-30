@@ -16,7 +16,7 @@ public class Store extends InstruccionComunUnParametro implements Instruccion{
     
     BUS Bus;
 
-    public Store(Map<String, String> registros, Conversor conversor, int peso, BUS bus) {
+    public Store(Conversor conversor, int peso, BUS bus) {
         super(conversor, peso);
         Bus = bus;
     }
@@ -24,7 +24,8 @@ public class Store extends InstruccionComunUnParametro implements Instruccion{
     @Override
     public void EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception {
         Registros = registros;
-        AplicarPeso();
+        if(AplicarPeso())
+            return;
         Desestructurar(instruccion);
         String dato = Registros.get("00001");
         String direccion = Registros.get(Param1);

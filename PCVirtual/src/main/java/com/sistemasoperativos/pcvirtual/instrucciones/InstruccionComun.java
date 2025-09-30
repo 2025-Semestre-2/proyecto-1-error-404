@@ -25,12 +25,13 @@ public abstract class InstruccionComun {
         Contador = 0;
     }
     
-    protected void AplicarPeso(){
+    protected boolean AplicarPeso(){
         Contador++;
         if(Contador != Peso){
-            return;
+            return true;
         }
         Contador = 0;
+        return false;
     }
     
     protected void IrSiguienteInstruccion(){

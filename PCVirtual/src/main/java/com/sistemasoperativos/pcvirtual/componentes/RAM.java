@@ -4,6 +4,8 @@
  */
 package com.sistemasoperativos.pcvirtual.componentes;
 
+import java.util.Map;
+
 /**
  * Interfaz para la Memoria de Acceso Aleatorio (RAM) de la computadora virtual.
  *
@@ -12,4 +14,5 @@ package com.sistemasoperativos.pcvirtual.componentes;
 public interface RAM {
     public Boolean EscribirDato(String direccion, String dato) throws Exception;
     public String LeerDato(String direccion) throws Exception;
+    public Map<String, String> TraerMemoriaRAM();
 }

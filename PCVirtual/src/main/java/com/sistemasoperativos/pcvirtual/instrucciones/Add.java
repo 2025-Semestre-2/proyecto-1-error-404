@@ -20,7 +20,8 @@ public class Add extends InstruccionComunUnParametro implements Instruccion {
     @Override
     public void EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception {
         Registros = registros;
-        AplicarPeso();
+        if(AplicarPeso())
+            return;
         Desestructurar(instruccion);
         String param1 = Registros.get("00001");
         int num1 = ConversorAsignado.ConvertirBitsAInteger(param1);

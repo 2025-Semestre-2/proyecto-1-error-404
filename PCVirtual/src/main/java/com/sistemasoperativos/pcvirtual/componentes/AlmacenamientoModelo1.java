@@ -60,4 +60,8 @@ public class AlmacenamientoModelo1 implements Almacenamiento {
         return instrucciones;
     }
     
+    @Override
+    public Map<String, String> TraerAlmacenamiento(){
+        return Memoria;
+    }
 }

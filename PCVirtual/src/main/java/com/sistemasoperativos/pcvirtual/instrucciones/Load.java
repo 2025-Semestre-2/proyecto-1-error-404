@@ -16,7 +16,7 @@ public class Load extends InstruccionComunUnParametro implements Instruccion{
     
     BUS Bus;
 
-    public Load(Map<String, String> registros, Conversor conversor, int peso, BUS bus) {
+    public Load(Conversor conversor, int peso, BUS bus) {
         super(conversor, peso);
         Bus = bus;
     }
@@ -24,7 +24,8 @@ public class Load extends InstruccionComunUnParametro implements Instruccion{
     @Override
     public void EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception {
         Registros = registros;
-        AplicarPeso();
+        if(AplicarPeso())
+            return;
         Desestructurar(instruccion);
         String direccion = Registros.get(Param1);
         String dato = Bus.LeerDatoRAM(direccion);

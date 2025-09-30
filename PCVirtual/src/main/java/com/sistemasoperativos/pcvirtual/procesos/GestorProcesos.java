@@ -20,10 +20,8 @@ public class GestorProcesos {
     }
 
     // Crear proceso y mandarlo a la cola de listos
-    public void crearProceso(int id, String nombre, int prioridad) {
-        BCP bcp = new BCP(id, nombre, prioridad);
-        bcp.marcarPreparado();
-        planificador.agregarProceso(bcp);
+    public void crearProceso() throws Exception {
+        planificador.agregarProceso();
     }
 
     // Despacho (cambio de contexto)
@@ -43,7 +41,7 @@ public class GestorProcesos {
     }
 
     public BCP getProcesoActual() {
-        return procesoActual;
+        return planificador.ObtenerBCPActual();
     }
 
     public Planificador getPlanificador() {

@@ -16,7 +16,7 @@ public class Push extends InstruccionComunUnParametro implements Instruccion{
     
     BUS BUSAsignado;
 
-    public Push(Map<String, String> registros, Conversor conversor, int peso, BUS bus) {
+    public Push(Conversor conversor, int peso, BUS bus) {
         super(conversor, peso);
         BUSAsignado = bus;
     }
@@ -24,7 +24,8 @@ public class Push extends InstruccionComunUnParametro implements Instruccion{
     @Override
     public void EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception {
         Registros = registros;
-        AplicarPeso();
+        if(AplicarPeso())
+            return;
         Desestructurar(instruccion);
         String dato = Registros.get(Param1);
         String direccion = Registros.get("01000");

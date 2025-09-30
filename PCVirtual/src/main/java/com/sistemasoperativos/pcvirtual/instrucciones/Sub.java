@@ -13,14 +13,15 @@ import java.util.Map;
  */
 public class Sub extends InstruccionComunUnParametro implements Instruccion{
 
-    public Sub(Map<String, String> registros, Conversor conversor, int peso) {
+    public Sub(Conversor conversor, int peso) {
         super(conversor, peso);
     }
 
     @Override
     public void EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception {
         Registros = registros;
-        AplicarPeso();
+        if(AplicarPeso())
+            return;
         Desestructurar(instruccion);
         String param1 = Registros.get("00001");
         int num1 = ConversorAsignado.ConvertirBitsAInteger(param1);

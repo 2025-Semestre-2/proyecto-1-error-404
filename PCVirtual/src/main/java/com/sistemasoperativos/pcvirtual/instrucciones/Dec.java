@@ -20,6 +20,8 @@ public class Dec extends InstruccionComunUnParametro implements Instruccion{
     @Override
     public void EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception {
         Registros = registros;
+        if(AplicarPeso())
+            return;
         AplicarPeso();
         if(instruccion.length() == 5){
             String dato = Registros.get("00001");

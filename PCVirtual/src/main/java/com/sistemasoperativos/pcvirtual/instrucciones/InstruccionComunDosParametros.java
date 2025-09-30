@@ -22,7 +22,7 @@ public class InstruccionComunDosParametros extends InstruccionComun{
     @Override
     protected void Desestructurar(String lineaBinaria) {
         Param1 = lineaBinaria.substring(5, 10);
-        Param2 = lineaBinaria.substring(9);
+        Param2 = lineaBinaria.substring(10);
     }
     
 }

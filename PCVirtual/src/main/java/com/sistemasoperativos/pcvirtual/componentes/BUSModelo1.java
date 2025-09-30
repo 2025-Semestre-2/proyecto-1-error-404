@@ -4,9 +4,6 @@
  */
 package com.sistemasoperativos.pcvirtual.componentes;
 
-import com.sistemasoperativos.pcvirtual.componentes.BUS;
-import com.sistemasoperativos.pcvirtual.componentes.CPU;
-import com.sistemasoperativos.pcvirtual.componentes.RAM;
 import java.util.Map;
 
 /**
@@ -15,8 +12,8 @@ import java.util.Map;
  * @author Andrew López Herrera
  */
 public class BUSModelo1 implements BUS {
-    private RAM RAMInstalada;
-    private CPU CPUInstalado;
+    protected RAM RAMInstalada;
+    protected CPU CPUInstalado;
 
     /**
      * Constructor del BUSModelo1.

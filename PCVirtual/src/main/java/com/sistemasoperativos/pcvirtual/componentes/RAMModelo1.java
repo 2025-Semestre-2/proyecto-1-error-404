@@ -13,7 +13,7 @@ import java.util.HashMap;
  * @author Andrew López Herrera
  */
 public class RAMModelo1 implements RAM{
-    private Map<Integer, String> Memoria;
+    private Map<String, String> Memoria;
     private Integer CantidadMemoria;
     private Conversor ConversorUtilizado;
     
@@ -28,7 +28,8 @@ public class RAMModelo1 implements RAM{
         Memoria = new HashMap();
         String datoInicial = ConversorUtilizado.ConvertirIntegerABits(0);
         for(int memoriaAsignada = 0; memoriaAsignada < CantidadMemoria; memoriaAsignada++){
-            Memoria.put(memoriaAsignada, datoInicial);
+            String direccion = ConversorUtilizado.ConvertirIntegerABits(memoriaAsignada);
+            Memoria.put(direccion, datoInicial);
         }
     }
     
@@ -43,10 +44,10 @@ public class RAMModelo1 implements RAM{
     @Override
     public Boolean EscribirDato(String direccion, String dato) throws Exception{
         int direccionDecimal = ConversorUtilizado.ConvertirBitsAInteger(direccion);
-        if(!Memoria.containsKey(direccionDecimal))
+        if(!Memoria.containsKey(direccion))
             throw new Exception("No existe la dirección: " + direccionDecimal + " | " + direccion);
         if(direccionDecimal < CantidadMemoria && direccionDecimal > 0){
-            Memoria.put(direccionDecimal, dato);
+            Memoria.put(direccion, dato);
             return true;
         }
         return false;
@@ -62,9 +63,14 @@ public class RAMModelo1 implements RAM{
     @Override
     public String LeerDato(String direccion) throws Exception{
         int direccionDecimal = ConversorUtilizado.ConvertirBitsAInteger(direccion);
-        if(!Memoria.containsKey(direccionDecimal))
+        if(!Memoria.containsKey(direccion))
             throw new Exception("No existe la dirección: " + direccionDecimal + " | " + direccion);
-        String dato = Memoria.get(direccionDecimal);
+        String dato = Memoria.get(direccion);
         return dato;
+    }
+    
+    @Override
+    public Map<String, String> TraerMemoriaRAM(){
+        return Memoria;
     }
 }

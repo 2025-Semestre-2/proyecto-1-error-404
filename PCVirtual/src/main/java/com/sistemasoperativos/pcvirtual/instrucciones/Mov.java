@@ -13,7 +13,7 @@ import java.util.Map;
  */
 public class Mov extends InstruccionComunDosParametros implements Instruccion{
 
-    public Mov(Map<String, String> registros, Conversor conversor, int peso) {
+    public Mov(Conversor conversor, int peso) {
         super(conversor, peso);
     }
 
@@ -22,7 +22,8 @@ public class Mov extends InstruccionComunDosParametros implements Instruccion{
     @Override
     public void EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception {
         Registros = registros;
-        AplicarPeso();
+        if(AplicarPeso())
+            return;
         Desestructurar(instruccion);
         if(Param2.length() == 8){
             Registros.put(Param1, Param2);

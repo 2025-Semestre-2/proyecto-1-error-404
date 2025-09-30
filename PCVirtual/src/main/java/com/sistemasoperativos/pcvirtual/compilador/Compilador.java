@@ -4,6 +4,7 @@
  */
 package com.sistemasoperativos.pcvirtual.compilador;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -11,5 +12,5 @@ import java.util.List;
  * @author andrewdeni
  */
 public interface Compilador {
-    public List<String> Compilar(String direccion) throws Exception;
+    public List<String> Compilar(File archivo) throws Exception;
 }

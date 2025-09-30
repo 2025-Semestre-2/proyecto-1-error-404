@@ -4,6 +4,7 @@
  */
 package com.sistemasoperativos.pcvirtual.instrucciones;
 
+import com.sistemasoperativos.pcvirtual.componentes.BUS2;
 import com.sistemasoperativos.pcvirtual.componentes.BUSPantalla;
 import com.sistemasoperativos.pcvirtual.componentes.Conversor;
 import java.util.Map;
@@ -15,8 +16,9 @@ import java.util.Map;
 public class Int extends InstruccionComunUnParametro implements Instruccion{
     
     BUSPantalla BusPantalla;
+    BUS2 BUSAsignado;
 
-    public Int(Conversor conversor, int peso,BUSPantalla busPantalla) {
+    public Int(Conversor conversor, int peso,BUSPantalla busPantalla, BUS2 bus) {
         super(conversor, peso);
         BusPantalla = busPantalla;
     }
@@ -24,10 +26,21 @@ public class Int extends InstruccionComunUnParametro implements Instruccion{
     @Override
     public void EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception {
         Registros = registros;
-        AplicarPeso();
+        if(AplicarPeso())
+            return;
         Desestructurar(instruccion);
-        if(Param1.equals("00000")){
-            BusPantalla.Leer();
+        switch (Param1) {
+            case "00000":
+                EjecutarINT09H();
+                break;
+            case "00001":
+                EjecutarINT10H();
+                break;
+            case "00010":
+                EjecutarINT20H();
+                break;
+            default:
+                break;
         }
     }
     
@@ -45,8 +58,8 @@ public class Int extends InstruccionComunUnParametro implements Instruccion{
         IrSiguienteInstruccion();
     }
     
-    private void EjecutarINT20H(){
-        
+    private void EjecutarINT20H() throws Exception{
+        BUSAsignado.SolicitarNuevoPrograma();
     }
     
 }

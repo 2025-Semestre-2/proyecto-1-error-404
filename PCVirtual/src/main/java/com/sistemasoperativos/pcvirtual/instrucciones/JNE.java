@@ -13,14 +13,15 @@ import java.util.Map;
  */
 public class JNE extends JMP implements Instruccion{
     
-    public JNE(Map<String, String> registros, Conversor conversor, int peso) {
+    public JNE(Conversor conversor, int peso) {
         super(conversor, peso);
     }
     
     @Override
     public void EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception {
         Registros = registros;
-        AplicarPeso();
+        if(AplicarPeso())
+            return;
         Desestructurar(instruccion);
         String banderaBits = Registros.get("00111");
         int bandera = ConversorAsignado.ConvertirBitsAInteger(banderaBits);

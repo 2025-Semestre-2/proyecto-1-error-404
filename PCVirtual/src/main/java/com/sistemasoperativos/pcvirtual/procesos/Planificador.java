@@ -6,6 +6,7 @@ package com.sistemasoperativos.pcvirtual.procesos;
 
 import com.sistemasoperativos.pcvirtual.componentes.BUS2;
 import com.sistemasoperativos.pcvirtual.componentes.Conversor;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
@@ -18,24 +19,32 @@ import java.util.Queue;
 public class Planificador {
     private final ColaProcesos colaListos;
     private BUS2 BUSAsignado;
-    private List<String> DireccionesProgramas;
+    private LinkedList<String> DireccionesProgramas;
+    private LinkedList<String> NombresProgramas;
     private final int DireccionBase = 100;
     private Conversor ConversorAsignado;
+    private int CantidadProgramas;
+    private BCP BCPActual;
 
-    public Planificador(BUS2 bus, List<String> direccionesPrograma) {
+    public Planificador(LinkedList<String> direccionesPrograma, LinkedList<String> nombresProgramas) {
         this.colaListos = new ColaProcesos();
-        BUSAsignado = bus;
+        BUSAsignado = null;
         ConversorAsignado = new Conversor();
+        CantidadProgramas = 0;
+        DireccionesProgramas = direccionesPrograma;
+        NombresProgramas = nombresProgramas;
     }
 
-    public void agregarProceso(BCP proceso) throws Exception {
-        proceso.marcarPreparado();
+    public void agregarProceso() throws Exception {
         while(!DireccionesProgramas.isEmpty() && !colaListos.estaLleno()){
+            CantidadProgramas++;
             String direccionMemoriaPrograma = DireccionesProgramas.removeLast();
             List<String> programa = BUSAsignado.LeerAlmacenamiento(direccionMemoriaPrograma);
+            BCP proceso = new BCP(CantidadProgramas, NombresProgramas.removeLast(), programa.size());
             EscribirPrograma(programa, proceso);
+            proceso.marcarPreparado();
+            colaListos.agregar(proceso);
         }
-        colaListos.agregar(proceso);
     }
     
     private void EscribirPrograma(List<String> programa, BCP bcp) throws Exception{
@@ -75,6 +84,7 @@ public class Planificador {
     public BCP obtenerSiguiente() throws Exception {
         BCP bcp = colaListos.obtener(); // FCFS
         BUSAsignado.AsignarRegistrosCPU(bcp.getRegistros());
+        BCPActual = bcp;
         return bcp;
     }
 
@@ -84,5 +94,13 @@ public class Planificador {
 
     public ColaProcesos getColaListos() {
         return colaListos;
+    }
+    
+    public void AsignarBUS(BUS2 bus){
+        BUSAsignado = bus;
+    }
+    
+    public BCP ObtenerBCPActual(){
+        return BCPActual;
     }
 }

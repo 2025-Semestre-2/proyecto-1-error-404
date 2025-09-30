@@ -19,7 +19,8 @@ public class Inc extends InstruccionComunUnParametro implements Instruccion{
     @Override
     public void EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception {
         Registros = registros;
-        AplicarPeso();
+        if(AplicarPeso())
+            return;
         if(instruccion.length() == 5){
             String dato = Registros.get("00001");
             int resultado = ConversorAsignado.ConvertirBitsAInteger(dato) + 1;
