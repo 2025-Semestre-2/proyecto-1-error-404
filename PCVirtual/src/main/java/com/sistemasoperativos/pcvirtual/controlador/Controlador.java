@@ -3,9 +3,7 @@ package com.sistemasoperativos.pcvirtual.controlador;
 import com.sistemasoperativos.pcvirtual.compilador.AdmnistradorProgramasNuevos;
 import com.sistemasoperativos.pcvirtual.componentes.Almacenamiento;
 import com.sistemasoperativos.pcvirtual.componentes.AlmacenamientoModelo1;
-import com.sistemasoperativos.pcvirtual.componentes.BUS;
 import com.sistemasoperativos.pcvirtual.componentes.BUS2;
-import com.sistemasoperativos.pcvirtual.componentes.BUSModelo1;
 import com.sistemasoperativos.pcvirtual.componentes.BUSModelo2;
 import com.sistemasoperativos.pcvirtual.componentes.BUSPantalla;
 import com.sistemasoperativos.pcvirtual.componentes.CPU;
@@ -162,6 +160,7 @@ public class Controlador {
     }
     
     public void EjecutarInstruccion() throws Exception{
+        Gestor.crearProceso();
         BUSAsignado.EjecutarInstruccionCPU();
     }
     
@@ -184,4 +183,6 @@ public class Controlador {
     public Map<String, String> TraerAlmacenamiento() {
         return BUSAsignado.TraerAlmacenamiento();
     }
+    
+    
 }

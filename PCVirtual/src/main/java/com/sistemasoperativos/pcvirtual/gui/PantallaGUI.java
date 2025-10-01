@@ -10,8 +10,8 @@ import javafx.stage.Stage;
 
 public class PantallaGUI extends Application {
 
-    private TextArea pantallaSalida;
-    private TextField pantallaEntrada;
+    private static TextArea pantallaSalida;
+    private static TextField pantallaEntrada;
 
     @Override
     public void start(Stage primaryStage) {
@@ -93,12 +93,12 @@ public class PantallaGUI extends Application {
     }
 
     // escribir en la pantalla
-    public void escribir(String texto) {
+    public static void escribir(String texto) {
         pantallaSalida.appendText(texto + "\n");
     }
 
     // leer desde la pantalla
-    public String leer() {
+    public static String leer() {
         String texto = pantallaEntrada.getText();
         pantallaEntrada.clear();
         return texto;

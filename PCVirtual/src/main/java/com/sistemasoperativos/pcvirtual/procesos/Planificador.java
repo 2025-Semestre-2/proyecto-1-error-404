@@ -37,13 +37,13 @@ public class Planificador {
 
     public void agregarProceso() throws Exception {
         while(!DireccionesProgramas.isEmpty() && !colaListos.estaLleno()){
-            CantidadProgramas++;
             String direccionMemoriaPrograma = DireccionesProgramas.removeLast();
             List<String> programa = BUSAsignado.LeerAlmacenamiento(direccionMemoriaPrograma);
             BCP proceso = new BCP(CantidadProgramas, NombresProgramas.removeLast(), programa.size());
             EscribirPrograma(programa, proceso);
             proceso.marcarPreparado();
-            colaListos.agregar(proceso);
+            colaListos.agregar(proceso, BUSAsignado);
+            CantidadProgramas++;
         }
     }
     

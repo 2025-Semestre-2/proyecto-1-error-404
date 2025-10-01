@@ -83,6 +83,14 @@ public class BCP {
     public void marcarFinalizado() {
         this.estado = EstadoBCP.FINALIZADO;
     }
+    
+    public int getID(){
+        return id;
+    }
+    
+    public int getPrioridad(){
+        return prioridad;
+    }
 
     // ----------- Manejo de archivos ----------- 
     public void abrirArchivo(String nombreArchivo) {
