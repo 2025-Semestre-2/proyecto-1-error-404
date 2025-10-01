@@ -1,11 +1,20 @@
 package com.sistemasoperativos.pcvirtual.gui;
 
+import com.sistemasoperativos.pcvirtual.controlador.Controlador;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.util.Optional;
@@ -13,13 +22,20 @@ import java.util.Optional;
 /**
  * Ventana principal del simulador (Proyecto 1 de SO).
  * <p>
- * Muestra barra de acciones, panel de procesos/estados, registros del BCP actual,
- * tablas de Memoria y Disco, y la sección de “Pantalla” (entrada/salida).
- * Incluye la acción <strong>Crear PC</strong> que abre un diálogo para configurar
- * la memoria (RAM y almacenamiento) de una PC virtual.
+ * Muestra: barra de acciones; panel izquierdo con "Cargar archivos" y una tabla
+ * de Procesos/Estados; panel central con registros del BCP actual; panel derecho
+ * con tablas de Memoria y Disco; y la sección inferior "Pantalla" con entrada/salida.
+ * <br>
+ * Incluye la acción <strong>Crear PC</strong> que abre un diálogo secundario
+ * ( {@link CrearPCDialog} ) para capturar RAM y Almacenamiento; dicho diálogo
+ * invoca a {@link Controlador#CrearPC(int, int)} y opcionalmente devuelve un
+ * {@link ConfigPC} con los datos ingresados para mostrar feedback o refrescar la UI.
  * </p>
  */
 public class PantallaGUI extends Application {
+
+    /** Controlador principal de la aplicación. */
+    private final Controlador controlador = new Controlador();
 
     /** Área de salida de la “Pantalla” virtual. */
     private TextArea pantallaSalida;
@@ -133,16 +149,17 @@ public class PantallaGUI extends Application {
 
         // “Crear PC”: abre la ventana secundaria y recibe RAM/Disco.
         btnCrearPC.setOnAction(e -> {
-            Optional<ConfigPC> res = CrearPCDialog.show(primaryStage);
-            res.ifPresent(cfg -> {
-                // Aquí conectas con tu Controlador/Modelo si lo deseas.
-                // Ejemplo de feedback en la “Pantalla”:
-                escribir("PC creado → RAM: " + cfg.getRamMB() +
-                         " MB, Almacenamiento: " + cfg.getAlmacenamientoMB() + " MB");
-            });
+            CrearPCDialog dlg = new CrearPCDialog(controlador, primaryStage);
+            Optional<ConfigPC> res = dlg.showAndWait();
+
+            // Feedback opcional (además del llamado interno al controlador):
+            res.ifPresent(cfg ->
+                    escribir("PC creada → RAM: " + cfg.getRamMB() +
+                             " MB, Almacenamiento: " + cfg.getAlmacenamientoMB() + " MB")
+            );
         });
 
-        // Ejemplos de handlers (déjalos a tu gusto)
+        // Ejemplo simple para “Limpiar”
         btnLimpiar.setOnAction(e -> pantallaSalida.clear());
     }
 
