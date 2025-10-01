@@ -21,16 +21,20 @@ import java.util.Optional;
  */
 public class PantallaGUI extends Application {
 
-<<<<<<< Updated upstream
     private static TextArea pantallaSalida;
     private static TextField pantallaEntrada;
-=======
+
     /** Área de salida de la “Pantalla” virtual. */
     private TextArea pantallaSalida;
 
     /** Campo de entrada de la “Pantalla” virtual. */
     private TextField pantallaEntrada;
->>>>>>> Stashed changes
+
+    /** Área de salida de la “Pantalla” virtual. */
+    private TextArea pantallaSalida;
+
+    /** Campo de entrada de la “Pantalla” virtual. */
+    private TextField pantallaEntrada;
 
     /**
      * Punto de entrada de JavaFX. Construye el layout principal y cablea acciones.
@@ -151,7 +155,6 @@ public class PantallaGUI extends Application {
         btnLimpiar.setOnAction(e -> pantallaSalida.clear());
     }
 
-<<<<<<< Updated upstream
     // escribir en la pantalla
     public static void escribir(String texto) {
         pantallaSalida.appendText(texto + "\n");
@@ -159,7 +162,15 @@ public class PantallaGUI extends Application {
 
     // leer desde la pantalla
     public static String leer() {
-=======
+    /**
+     * Agrega una línea de texto al área de salida de la “Pantalla” virtual.
+     *
+     * @param texto contenido a mostrar
+     */
+    public void escribir(String texto) {
+        pantallaSalida.appendText(texto + "\n");
+    }
+
     /**
      * Agrega una línea de texto al área de salida de la “Pantalla” virtual.
      *
@@ -175,7 +186,6 @@ public class PantallaGUI extends Application {
      * @return el texto introducido por el usuario (o cadena vacía si no había nada)
      */
     public String leer() {
->>>>>>> Stashed changes
         String texto = pantallaEntrada.getText();
         pantallaEntrada.clear();
         return texto;
