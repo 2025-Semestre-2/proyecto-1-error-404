@@ -21,15 +21,6 @@ import java.util.Optional;
  */
 public class PantallaGUI extends Application {
 
-    private static TextArea pantallaSalida;
-    private static TextField pantallaEntrada;
-
-    /** Área de salida de la “Pantalla” virtual. */
-    private TextArea pantallaSalida;
-
-    /** Campo de entrada de la “Pantalla” virtual. */
-    private TextField pantallaEntrada;
-
     /** Área de salida de la “Pantalla” virtual. */
     private TextArea pantallaSalida;
 
@@ -153,22 +144,6 @@ public class PantallaGUI extends Application {
 
         // Ejemplos de handlers (déjalos a tu gusto)
         btnLimpiar.setOnAction(e -> pantallaSalida.clear());
-    }
-
-    // escribir en la pantalla
-    public static void escribir(String texto) {
-        pantallaSalida.appendText(texto + "\n");
-    }
-
-    // leer desde la pantalla
-    public static String leer() {
-    /**
-     * Agrega una línea de texto al área de salida de la “Pantalla” virtual.
-     *
-     * @param texto contenido a mostrar
-     */
-    public void escribir(String texto) {
-        pantallaSalida.appendText(texto + "\n");
     }
 
     /**
