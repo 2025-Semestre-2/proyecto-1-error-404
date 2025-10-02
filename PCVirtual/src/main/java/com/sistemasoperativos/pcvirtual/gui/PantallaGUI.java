@@ -1,194 +1,244 @@
 package com.sistemasoperativos.pcvirtual.gui;
 
+import com.sistemasoperativos.pcvirtual.componentes.BUSPantalla;
 import com.sistemasoperativos.pcvirtual.controlador.Controlador;
+
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-
-import java.util.Optional;
+import java.util.stream.Collectors;
+import java.io.File;
+import java.util.Map;
 
 /**
  * Ventana principal del simulador (Proyecto 1 de SO).
- * <p>
- * Muestra: barra de acciones; panel izquierdo con "Cargar archivos" y una tabla
- * de Procesos/Estados; panel central con registros del BCP actual; panel derecho
- * con tablas de Memoria y Disco; y la sección inferior "Pantalla" con entrada/salida.
- * <br>
- * Incluye la acción <strong>Crear PC</strong> que abre un diálogo secundario
- * ( {@link CrearPCDialog} ) para capturar RAM y Almacenamiento; dicho diálogo
- * invoca a {@link Controlador#CrearPC(int, int)} y opcionalmente devuelve un
- * {@link ConfigPC} con los datos ingresados para mostrar feedback o refrescar la UI.
- * </p>
+ * - La GUI invoca métodos del Controlador y luego refresca la vista con los datos del controlador.
+ * - NO se crean archivos/clases adicionales; todo está contenido aquí.
  */
 public class PantallaGUI extends Application {
 
-    /** Controlador principal de la aplicación. */
-    private final Controlador controlador = new Controlador();
-
-    /** Área de salida de la “Pantalla” virtual. */
+    // ---------- Campos de UI que necesitamos fuera de start() ----------
     private TextArea pantallaSalida;
-
-    /** Campo de entrada de la “Pantalla” virtual. */
     private TextField pantallaEntrada;
 
-    /**
-     * Punto de entrada de JavaFX. Construye el layout principal y cablea acciones.
-     *
-     * @param primaryStage escenario principal
-     */
+    private ListView<String> listaBPC;
+    private TableView<KV> tablaMemoria;
+    private TableView<KV> tablaDisco;
+
+    private final Controlador controlador = new Controlador();
+
     @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Proyecto 1 de SO");
 
-        // ---------------------------------------------------------------------
-        // Barra superior de acciones
-        // ---------------------------------------------------------------------
-        HBox barraAcciones = new HBox(15);
-        barraAcciones.setPadding(new Insets(10));
-        barraAcciones.setAlignment(Pos.CENTER);
-
-        Button btnCrearPC      = new Button("Crear PC");   // NUEVO
+        // ====== Barra superior ======
+        Button btnCrearPC      = new Button("Crear PC");
         Button btnEjecutar     = new Button("Ejecutar");
         Button btnPaso         = new Button("Paso a paso");
         Button btnLimpiar      = new Button("Limpiar");
         Button btnEstadisticas = new Button("Estadísticas");
 
-        barraAcciones.getChildren().addAll(
-                btnCrearPC, btnEjecutar, btnPaso, btnLimpiar, btnEstadisticas
-        );
+        HBox barra = new HBox(10, btnCrearPC, btnEjecutar, btnPaso, btnLimpiar, btnEstadisticas);
+        barra.setPadding(new Insets(10));
+        barra.setAlignment(Pos.CENTER_LEFT);
 
-        // ---------------------------------------------------------------------
-        // Panel izquierdo: “Cargar archivos” + tabla de procesos/estados
-        // ---------------------------------------------------------------------
-        VBox panelIzq = new VBox(10);
-        panelIzq.setPadding(new Insets(10));
-        panelIzq.setPrefWidth(180);
-
+        // ====== Izquierda: cargar + procesos ======
         Button btnCargar = new Button("Cargar archivos");
         TableView<String> tablaProcesos = new TableView<>();
         tablaProcesos.setPlaceholder(new Label("Procesos / Estados"));
-        VBox.setVgrow(tablaProcesos, Priority.ALWAYS);
+        VBox izq = new VBox(10, btnCargar, tablaProcesos);
+        izq.setPadding(new Insets(10));
+        izq.setPrefWidth(200);
 
-        panelIzq.getChildren().addAll(btnCargar, tablaProcesos);
-
-        // ---------------------------------------------------------------------
-        // Panel central: BPC actual (lista de registros)
-        // ---------------------------------------------------------------------
-        VBox panelBPC = new VBox(10);
-        panelBPC.setPadding(new Insets(10));
-        panelBPC.setPrefWidth(150);
-
+        // ====== BPC actual ======
         Label lblBPC = new Label("BPC actual CPU1");
-        ListView<String> listaBPC = new ListView<>();
+        listaBPC = new ListView<>();
         listaBPC.getItems().addAll("PC", "IR", "AC", "ETC");
+        VBox boxBPC = new VBox(10, lblBPC, listaBPC);
+        boxBPC.setPadding(new Insets(10));
+        boxBPC.setPrefWidth(200);
 
-        panelBPC.getChildren().addAll(lblBPC, listaBPC);
-
-        // ---------------------------------------------------------------------
-        // Panel derecho: Memoria y Disco (tablas)
-        // ---------------------------------------------------------------------
-        VBox panelMemoria = new VBox(5);
-        panelMemoria.setPadding(new Insets(10));
-        Label lblMemoria = new Label("Memoria");
-        TableView<String> tablaMemoria = new TableView<>();
+        // ====== Memoria y Disco ======
+        Label lblMem = new Label("Memoria");
+        tablaMemoria = new TableView<>();
         tablaMemoria.setPlaceholder(new Label("Tabla sin columnas"));
-        panelMemoria.getChildren().addAll(lblMemoria, tablaMemoria);
+        VBox panelMem = new VBox(5, lblMem, tablaMemoria);
+        panelMem.setPadding(new Insets(10));
 
-        VBox panelDisco = new VBox(5);
-        panelDisco.setPadding(new Insets(10));
-        Label lblDisco = new Label("Disco");
-        TableView<String> tablaDisco = new TableView<>();
+        Label lblDisk = new Label("Disco");
+        tablaDisco = new TableView<>();
         tablaDisco.setPlaceholder(new Label("Tabla sin columnas"));
-        panelDisco.getChildren().addAll(lblDisco, tablaDisco);
+        VBox panelDisk = new VBox(5, lblDisk, tablaDisco);
+        panelDisk.setPadding(new Insets(10));
 
-        HBox panelTablas = new HBox(20, panelMemoria, panelDisco);
+        HBox panelTablas = new HBox(20, panelMem, panelDisk);
 
-        // ---------------------------------------------------------------------
-        // Panel inferior: “Pantalla” (entrada + salida)
-        // ---------------------------------------------------------------------
+        // ====== Pantalla (entrada/salida) ======
         Label lblPantalla = new Label("Pantalla");
         pantallaEntrada = new TextField();
         pantallaEntrada.setPromptText(">> Ingresar valor:");
         pantallaSalida = new TextArea();
         pantallaSalida.setEditable(false);
-
         VBox panelPantalla = new VBox(5, lblPantalla, pantallaEntrada, pantallaSalida);
         panelPantalla.setPadding(new Insets(10));
         panelPantalla.setStyle("-fx-border-color: black; -fx-border-width: 1;");
-        panelPantalla.setPrefHeight(150);
+        panelPantalla.setPrefHeight(160);
 
-        // ---------------------------------------------------------------------
-        // Layout principal
-        // ---------------------------------------------------------------------
+        // ====== Root ======
         BorderPane root = new BorderPane();
-        root.setTop(barraAcciones);
-        root.setLeft(panelIzq);
-        root.setCenter(panelBPC);
+        root.setTop(barra);
+        root.setLeft(izq);
+        root.setCenter(boxBPC);
         root.setRight(panelTablas);
         root.setBottom(panelPantalla);
 
-        Scene scene = new Scene(root, 950, 550);
+        Scene scene = new Scene(root, 1000, 600);
         primaryStage.setScene(scene);
         primaryStage.show();
+        // ====== “BUS de pantalla” inline (sin archivos nuevos) ======
 
-        // ---------------------------------------------------------------------
-        // Acciones
-        // ---------------------------------------------------------------------
 
-        // “Crear PC”: abre la ventana secundaria y recibe RAM/Disco.
+        // ====== Handlers ======
+
+        // Crear PC: uso tu CrearPCDialog (ajusta el constructor que tengas)
         btnCrearPC.setOnAction(e -> {
-            CrearPCDialog dlg = new CrearPCDialog(controlador, primaryStage);
-            Optional<ConfigPC> res = dlg.showAndWait();
+            try {
+                // Si tu CrearPCDialog recibe (Controlador, Stage):
+                CrearPCDialog dlg = new CrearPCDialog(controlador, primaryStage);
+                // Si tu versión recibe además BUSPantalla, usa:
+                // CrearPCDialog dlg = new CrearPCDialog(controlador, busPantalla, primaryStage);
 
-            // Feedback opcional (además del llamado interno al controlador):
-            res.ifPresent(cfg ->
-                    escribir("PC creada → RAM: " + cfg.getRamMB() +
-                             " MB, Almacenamiento: " + cfg.getAlmacenamientoMB() + " MB")
-            );
+                dlg.showAndWait().ifPresent(cfg -> {
+                    escribir("PC creada → RAM " + cfg.getRamMB() + " MB, Almacenamiento " + cfg.getAlmacenamientoMB() + " MB");
+                    refrescarUITrasCarga(); // pinta reg/mem/disk iniciales
+                });
+            } catch (Exception ex) {
+                mostrarError("No se pudo crear la PC", ex.getMessage());
+            }
         });
 
-        // Ejemplo simple para “Limpiar”
-        btnLimpiar.setOnAction(e -> pantallaSalida.clear());
+        // Cargar archivos → llama a Controlador.CargarPrograma y refresca UI
+        FileChooser fc = new FileChooser();
+        fc.setTitle("Seleccionar programa");
+        fc.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Programas (*.asm, *.txt, *.bin)", "*.asm", "*.txt", "*.bin"),
+                new FileChooser.ExtensionFilter("Todos los archivos", "*.*")
+        );
+        btnCargar.setOnAction(ev -> {
+            File f = fc.showOpenDialog(primaryStage);
+            if (f == null) return;
+            try {
+                controlador.CargarPrograma(f);
+                escribir("Programa cargado: " + f.getName());
+                refrescarUITrasCarga();
+            } catch (Exception ex) {
+                mostrarError("No se pudo cargar el programa", ex.getMessage());
+            }
+        });
+
+        // Ejecutar (un paso) → EjecutarInstruccion y refrescar
+        btnEjecutar.setOnAction(ev -> {
+            try {
+                controlador.EjecutarInstruccion();
+                refrescarUITrasCarga();
+            } catch (Exception ex) {
+                mostrarError("Error al ejecutar instrucción", ex.getMessage());
+            }
+        });
+
+        // Paso a paso = igual que ejecutar en tu arquitectura
+        btnPaso.setOnAction(ev -> {
+            try {
+                controlador.EjecutarInstruccion();
+                refrescarUITrasCarga();
+            } catch (Exception ex) {
+                mostrarError("Error al ejecutar instrucción", ex.getMessage());
+            }
+        });
+
+        // Limpiar: limpiamos la vista (no toco tu Controlador)
+        btnLimpiar.setOnAction(ev -> {
+            listaBPC.getItems().clear();
+            tablaMemoria.getItems().clear();
+            tablaDisco.getItems().clear();
+            pantallaSalida.clear();
+            pantallaEntrada.clear();
+        });
+
+        // Estadísticas: muestra conteo básico desde la memoria/almacenamiento actuales
+        btnEstadisticas.setOnAction(ev -> {
+            var mem = controlador.TraerMemoriaActual();
+            var disk = controlador.TraerAlmacenamiento();
+            Alert a = new Alert(Alert.AlertType.INFORMATION,
+                    "Entradas en Memoria: " + mem.size() + "\nEntradas en Disco: " + disk.size(),
+                    ButtonType.OK);
+            a.setTitle("Estadísticas");
+            a.setHeaderText("Estado actual");
+            a.showAndWait();
+        });
     }
 
-    /**
-     * Agrega una línea de texto al área de salida de la “Pantalla” virtual.
-     *
-     * @param texto contenido a mostrar
-     */
-    public void escribir(String texto) {
+    // ============ Helpers de pintado ============
+
+    /** Refresca registros, memoria y disco usando el Controlador. */
+    private void refrescarUITrasCarga() {
+        try {
+            // Registros
+            Map<String, String> regs = controlador.TraerRegistros();
+            var items = regs.entrySet().stream()
+                    .sorted(Map.Entry.comparingByKey())
+                    .map(e -> e.getKey() + " = " + e.getValue())
+                    .collect(Collectors.toList()); 
+            listaBPC.getItems().setAll(items);
+        } catch (Exception ignored) {}
+
+        // Memoria y Disco
+        cargarTablaKV(tablaMemoria, controlador.TraerMemoriaActual());
+        cargarTablaKV(tablaDisco,   controlador.TraerAlmacenamiento());
+    }
+
+    /** Pinta un Map<K,V> en una TableView de dos columnas (Pos/Valor). */
+    private void cargarTablaKV(TableView<KV> table, Map<String, String> data) {
+        if (table.getColumns().isEmpty()) {
+            TableColumn<KV, String> cPos   = new TableColumn<>("Pos");
+            TableColumn<KV, String> cValor = new TableColumn<>("Valor");
+            cPos.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().k));
+            cValor.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().v));
+            cPos.setPrefWidth(120);
+            cValor.setPrefWidth(240);
+            table.getColumns().setAll(cPos, cValor);
+        }
+        var rows = data.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .map(e -> new KV(e.getKey(), e.getValue()))
+                .collect(Collectors.toList()); 
+        table.getItems().setAll(rows);
+    }
+
+    /** Modelo mínimo para la tabla (sin crear archivos). */
+    private static class KV {
+        final String k, v;
+        KV(String k, String v) { this.k = k; this.v = v; }
+    }
+
+    /** Añade texto a la “pantalla” de salida. */
+    private void escribir(String texto) {
         pantallaSalida.appendText(texto + "\n");
     }
 
-    /**
-     * Lee el contenido actual del campo de entrada de la “Pantalla” virtual y lo limpia.
-     *
-     * @return el texto introducido por el usuario (o cadena vacía si no había nada)
-     */
-    public String leer() {
-        String texto = pantallaEntrada.getText();
-        pantallaEntrada.clear();
-        return texto;
+    private void mostrarError(String header, String content) {
+        Alert a = new Alert(Alert.AlertType.ERROR, content, ButtonType.OK);
+        a.setTitle("Error");
+        a.setHeaderText(header);
+        a.showAndWait();
     }
 
-    /**
-     * Método main para lanzar la aplicación JavaFX.
-     *
-     * @param args argumentos de línea de comandos (no usados)
-     */
-    public static void main(String[] args) {
-        launch(args);
-    }
+    public static void main(String[] args) { launch(args); }
 }
