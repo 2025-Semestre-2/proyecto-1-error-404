@@ -52,7 +52,7 @@ public class CrearPCDialog extends Dialog<ConfigPC> {
         getDialogPane().getButtonTypes().addAll(btCrear, ButtonType.CANCEL);
 
         // --- Contenido del formulario ---
-        TextField tfRam   = new TextField("1024");  
+        TextField tfRam   = new TextField("512");  
         TextField tfDisco = new TextField("8192");  
 
         tfRam.setPromptText("RAM (MB)");

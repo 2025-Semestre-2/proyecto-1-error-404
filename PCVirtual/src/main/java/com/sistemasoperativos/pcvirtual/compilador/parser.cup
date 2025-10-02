@@ -67,9 +67,8 @@ start with programa;
 // === Reglas ===
 programa ::= bloqueInstrucciones;
 
-bloqueInstrucciones ::= instruccion
-                      | bloqueInstrucciones SEPARATOR instruccion
-                      ;
+bloqueInstrucciones ::= instruccion:ins
+                      | bloqueInstrucciones SEPARATOR instruccion:ins;
 
 instruccion ::= instruccionUnArgumento
               | instruccionDosArgumentos

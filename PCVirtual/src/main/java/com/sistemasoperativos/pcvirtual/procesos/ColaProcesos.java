@@ -33,11 +33,11 @@ public class ColaProcesos {
         bus.EscribirDatoRAM(direccionBits, dato);
         direccionEntera++;
         direccionBits = ConversorAsignado.ConvertirIntegerABits(direccionEntera); //
-        dato = ConversorAsignado.ConvertirIntegerABits(proceso.getBase());
+        dato = proceso.getBase();
         bus.EscribirDatoRAM(direccionBits, dato);
         direccionEntera++;
         direccionBits = ConversorAsignado.ConvertirIntegerABits(direccionEntera); //
-        dato = ConversorAsignado.ConvertirIntegerABits(proceso.getLimite());
+        dato = proceso.getLimite();
         bus.EscribirDatoRAM(direccionBits, dato);
         direccionEntera++;
         direccionBits = ConversorAsignado.ConvertirIntegerABits(direccionEntera); //

@@ -5,7 +5,7 @@
 package com.sistemasoperativos.pcvirtual.componentes;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +24,7 @@ public class AlmacenamientoModelo1 implements Almacenamiento {
         CantidadMemoria = cantidadMemoria;
         ConversorAsignado = conversor;
         String datoInicial = ConversorAsignado.ConvertirIntegerABits(0);
-        Memoria = new HashMap<>();
+        Memoria = new LinkedHashMap<>();
         for(int direccion = 0; direccion < CantidadMemoria; direccion++){
             String direccionBinaria = ConversorAsignado.ConvertirIntegerABits(direccion);
             Memoria.put(direccionBinaria, datoInicial);

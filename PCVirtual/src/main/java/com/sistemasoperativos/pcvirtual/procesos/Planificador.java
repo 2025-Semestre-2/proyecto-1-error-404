@@ -36,6 +36,8 @@ public class Planificador {
     }
 
     public void agregarProceso() throws Exception {
+        System.out.println(DireccionesProgramas.toString());
+        System.out.println(NombresProgramas.toString());
         while(!DireccionesProgramas.isEmpty() && !colaListos.estaLleno()){
             String direccionMemoriaPrograma = DireccionesProgramas.removeLast();
             List<String> programa = BUSAsignado.LeerAlmacenamiento(direccionMemoriaPrograma);

@@ -29,6 +29,7 @@ public class AdmnistradorProgramasNuevos {
     public void CargarPrograma(File archivo) throws Exception{
         String nombre = archivo.getName();
         List<String> programa = CompiladorAsignado.Compilar(archivo);
+        System.out.println(programa.toString());
         String direccion = BUSAsignado.EscribirAlmacenamiento(programa);
         NombreProgramas.addFirst(nombre);
         DireccionesProgramas.addFirst(direccion);

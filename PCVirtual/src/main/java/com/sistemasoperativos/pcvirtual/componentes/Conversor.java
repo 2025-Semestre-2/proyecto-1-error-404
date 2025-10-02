@@ -45,7 +45,7 @@ public class Conversor {
             bits += "0";
             numero *= -1;
         }
-        bits += String.format("%7s", Integer.toBinaryString(numero)).replace(' ', '0');
+        bits += String.format("%15s", Integer.toBinaryString(numero)).replace(' ', '0');
         return bits;
     }
 }

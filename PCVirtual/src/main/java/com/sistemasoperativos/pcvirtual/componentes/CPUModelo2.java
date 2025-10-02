@@ -5,6 +5,7 @@
 package com.sistemasoperativos.pcvirtual.componentes;
 
 import com.sistemasoperativos.pcvirtual.instrucciones.Instruccion;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -28,18 +29,36 @@ public class CPUModelo2 implements CPU{
      */
     private Map<String, String> Registros;
     
-    private BUS BUSAsignado;
+    private BUS2 BUSAsignado;
     
     private int ContadorPeso;
     
     public CPUModelo2(Map<String, Instruccion> instrucciones, Map<String, String> registros){
         Instrucciones = instrucciones;
-        Registros = null;
+        Registros = crearRegistrosPorDefecto();
+    }
+    
+    private Map<String, String> crearRegistrosPorDefecto() {
+        Map<String, String> registros = new LinkedHashMap<>();
+        registros.put("00000", "0000000000000000"); // Contador de programa
+        registros.put("00001", "0000000000000000"); // Acumulador
+        registros.put("00010", "0000000000000000"); // Registro de instrucción
+        registros.put("00011", "0000000000000000");
+        registros.put("00100", "0000000000000000");
+        registros.put("00101", "0000000000000000");
+        registros.put("00110", "0000000000000000");
+        registros.put("00111", "0000000000000000"); // Contador de pila
+        registros.put("01000", "0000000000000000"); // Stack pointer
+        return registros;
     }
     
     @Override
     public void EjecutarInstruccion() throws Exception {
         String instruccionBits = Registros.get("00010").substring(0, 5);
+        if(instruccionBits.equals(0000000000000000)){
+            BUSAsignado.SolicitarNuevoPrograma();
+            instruccionBits = Registros.get("00010").substring(0, 5);
+        }
         if(!Instrucciones.containsKey(instruccionBits)){
             throw new Exception("La instrucción " + instruccionBits + " no existe");
         }
@@ -58,7 +77,7 @@ public class CPUModelo2 implements CPU{
     }
     
     @Override
-    public void AsignarBUS(BUS busAsignado) throws Exception{
+    public void AsignarBUS(BUS2 busAsignado) throws Exception{
         BUSAsignado = busAsignado;
     }
 }

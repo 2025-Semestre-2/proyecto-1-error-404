@@ -5,7 +5,7 @@
 package com.sistemasoperativos.pcvirtual.componentes;
 
 import java.util.Map;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 /**
  * Implementación del modelo 1 de la Memoria de Acceso Aleatorio (RAM) de la computadora virtual.
@@ -25,7 +25,7 @@ public class RAMModelo1 implements RAM{
     public RAMModelo1(Integer cantidadMemoria){
         ConversorUtilizado = new Conversor();
         CantidadMemoria = cantidadMemoria;
-        Memoria = new HashMap();
+        Memoria = new LinkedHashMap();
         String datoInicial = ConversorUtilizado.ConvertirIntegerABits(0);
         for(int memoriaAsignada = 0; memoriaAsignada < CantidadMemoria; memoriaAsignada++){
             String direccion = ConversorUtilizado.ConvertirIntegerABits(memoriaAsignada);

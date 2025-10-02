@@ -6,11 +6,13 @@ import com.sistemasoperativos.pcvirtual.componentes.AlmacenamientoModelo1;
 import com.sistemasoperativos.pcvirtual.componentes.BUS2;
 import com.sistemasoperativos.pcvirtual.componentes.BUSModelo2;
 import com.sistemasoperativos.pcvirtual.componentes.BUSPantalla;
+import com.sistemasoperativos.pcvirtual.componentes.BUSPantallaModelo1;
 import com.sistemasoperativos.pcvirtual.componentes.CPU;
 import com.sistemasoperativos.pcvirtual.componentes.CPUModelo2;
 import com.sistemasoperativos.pcvirtual.componentes.Conversor;
 import com.sistemasoperativos.pcvirtual.componentes.RAM;
 import com.sistemasoperativos.pcvirtual.componentes.RAMModelo1;
+import com.sistemasoperativos.pcvirtual.gui.PantallaGUI;
 import com.sistemasoperativos.pcvirtual.instrucciones.Add;
 import com.sistemasoperativos.pcvirtual.instrucciones.Dec;
 import com.sistemasoperativos.pcvirtual.instrucciones.Inc;
@@ -64,6 +66,7 @@ public class Controlador {
     }
 
     public void CrearPC(int tamanoRAM, int tamanoAlmacenamiento){
+        System.out.println("Creando PC...");
         int direccionEscrituraAlmacenamiento = 0;
         Conversor conversor = new Conversor();
         RAM ram = new RAMModelo1(tamanoRAM);
@@ -76,7 +79,8 @@ public class Controlador {
         LinkedList<String> nombresProgramas = new LinkedList();
         Planificador planificador = new Planificador(direccionesProgramas, nombresProgramas);
         BUS2 bus = new BUSModelo2(ram, cpu, planificador, almacenamiento);
-        BUSPantalla busPantalla = null;
+        planificador.AsignarBUS(bus);
+        BUSPantalla busPantalla = new BUSPantallaModelo1(this);
         CrearInstrucciones(instrucciones, bus, conversor, busPantalla);
         AdministradorProgramas = new AdmnistradorProgramasNuevos(nombresProgramas, direccionesProgramas, bus);
         BUSAsignado = bus;
@@ -184,5 +188,11 @@ public class Controlador {
         return BUSAsignado.TraerAlmacenamiento();
     }
     
+    public String Leer(){
+        return PantallaGUI.leer();
+    }
     
+    public void Escribir(String dato){
+        PantallaGUI.escribir(dato);
+    }
 }

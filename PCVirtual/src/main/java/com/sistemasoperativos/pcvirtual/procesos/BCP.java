@@ -109,6 +109,10 @@ public class BCP {
     public String getRegistro(String codigo) {
         return registros.get(codigo);
     }
+    
+    public String getNombre(){
+        return nombre;
+    }
 
     public void setRegistro(String codigo, String valor) {
         registros.put(codigo, valor);
@@ -195,16 +199,16 @@ public class BCP {
         registros.put("01000", valor);
     }
 
-    public int getBase() {
-        return Integer.parseInt(registros.get("01001"));
+    public String getBase() {
+        return registros.get("01001");
     }
 
     public void setBase(String valor) {
         registros.put("01001", valor);
     }
 
-    public int getLimite() {
-        return Integer.parseInt(registros.get("01010"));
+    public String getLimite() {
+        return registros.get("01010");
     }
 
     public void setLimite(String valor) {

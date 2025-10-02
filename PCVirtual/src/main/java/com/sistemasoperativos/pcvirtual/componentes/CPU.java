@@ -15,6 +15,6 @@ public interface CPU {
     public void EjecutarInstruccion() throws Exception;
     public void CambiarRegistros(Map<String, String> registros);
     public Map<String, String> ObtenerRegistros();
-    public void AsignarBUS(BUS busAsignado) throws Exception;
+    public void AsignarBUS(BUS2 busAsignado) throws Exception;
     
 }

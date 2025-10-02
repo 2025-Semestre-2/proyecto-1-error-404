@@ -264,6 +264,9 @@ class CUP$Parser$actions {
           case 2: // bloqueInstrucciones ::= instruccion 
             {
               Object RESULT =null;
+		int insleft = ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()).left;
+		int insright = ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()).right;
+		Object ins = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("bloqueInstrucciones",1, ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
@@ -273,6 +276,9 @@ class CUP$Parser$actions {
           case 3: // bloqueInstrucciones ::= bloqueInstrucciones SEPARATOR instruccion 
             {
               Object RESULT =null;
+		int insleft = ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()).left;
+		int insright = ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()).right;
+		Object ins = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("bloqueInstrucciones",1, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-2)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
