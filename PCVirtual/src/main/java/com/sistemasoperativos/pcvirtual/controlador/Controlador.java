@@ -196,3 +196,4 @@ public class Controlador {
         PantallaGUI.escribir(dato);
     }
 }
+

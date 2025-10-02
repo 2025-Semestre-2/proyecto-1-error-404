@@ -1,5 +1,6 @@
 package com.sistemasoperativos.pcvirtual.gui;
 
+import com.sistemasoperativos.pcvirtual.componentes.BUSPantalla;
 import com.sistemasoperativos.pcvirtual.controlador.Controlador;
 import com.sistemasoperativos.pcvirtual.procesos.BCP;
 import java.io.File;
@@ -98,7 +99,7 @@ public class PantallaGUI extends Application {
         tablaDisco = crearTablaMemoriaDisco();
         panelDisco.getChildren().addAll(lblDisco, tablaDisco);
 
-        HBox panelTablas = new HBox(20, panelMemoria, panelDisco);
+        HBox panelTablas = new HBox(20, panelMem, panelDisk);
 
         // ------------------- Panel inferior: Pantalla -------------------
         Label lblPantalla = new Label("Pantalla");
@@ -106,23 +107,23 @@ public class PantallaGUI extends Application {
         pantallaEntrada.setPromptText(">> Ingresar valor:");
         pantallaSalida = new TextArea();
         pantallaSalida.setEditable(false);
-
         VBox panelPantalla = new VBox(5, lblPantalla, pantallaEntrada, pantallaSalida);
         panelPantalla.setPadding(new Insets(10));
         panelPantalla.setStyle("-fx-border-color: black; -fx-border-width: 1;");
-        panelPantalla.setPrefHeight(150);
+        panelPantalla.setPrefHeight(160);
 
         // ------------------- Layout principal -------------------
         BorderPane root = new BorderPane();
-        root.setTop(barraAcciones);
-        root.setLeft(panelIzq);
-        root.setCenter(panelBPC);
+        root.setTop(barra);
+        root.setLeft(izq);
+        root.setCenter(boxBPC);
         root.setRight(panelTablas);
         root.setBottom(panelPantalla);
 
-        Scene scene = new Scene(root, 950, 550);
+        Scene scene = new Scene(root, 1000, 600);
         primaryStage.setScene(scene);
         primaryStage.show();
+        // ====== “BUS de pantalla” inline (sin archivos nuevos) ======
 
         // ------------------- Acciones -------------------
 
