@@ -65,7 +65,7 @@ public class Controlador {
         AdministradorProgramas = null;
     }
 
-    public void CrearPC(int tamanoRAM, int tamanoAlmacenamiento){
+    public void CrearPC(int tamanoRAM, int tamanoAlmacenamiento) throws Exception{
         System.out.println("Creando PC...");
         int direccionEscrituraAlmacenamiento = 0;
         Conversor conversor = new Conversor();
@@ -79,6 +79,7 @@ public class Controlador {
         LinkedList<String> nombresProgramas = new LinkedList();
         Planificador planificador = new Planificador(direccionesProgramas, nombresProgramas);
         BUS2 bus = new BUSModelo2(ram, cpu, planificador, almacenamiento);
+        cpu.AsignarBUS(bus);
         planificador.AsignarBUS(bus);
         BUSPantalla busPantalla = new BUSPantallaModelo1(this);
         CrearInstrucciones(instrucciones, bus, conversor, busPantalla);
@@ -170,6 +171,7 @@ public class Controlador {
     
     public void CargarPrograma(File archivo) throws Exception{
         AdministradorProgramas.CargarPrograma(archivo);
+        Gestor.crearProceso();
     }
     
     public Map<String, String> TraerRegistros() throws Exception{

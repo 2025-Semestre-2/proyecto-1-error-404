@@ -48,7 +48,7 @@ public class BCP {
             "01010" // LI
         };
         for (String c : codigos) {
-            registros.put(c, "00000000");
+            registros.put(c, "0000000000000000");
         }
 
         // Info contable

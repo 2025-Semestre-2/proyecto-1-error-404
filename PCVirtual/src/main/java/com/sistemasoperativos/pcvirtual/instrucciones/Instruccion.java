@@ -11,5 +11,5 @@ import java.util.Map;
  * @author andre
  */
 public interface Instruccion {
-    public void EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception;
+    public boolean EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception;
 }

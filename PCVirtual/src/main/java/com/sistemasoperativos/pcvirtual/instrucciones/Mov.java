@@ -20,18 +20,19 @@ public class Mov extends InstruccionComunDosParametros implements Instruccion{
     
 
     @Override
-    public void EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception {
+    public boolean EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception {
         Registros = registros;
         if(AplicarPeso())
-            return;
+            return false;
         Desestructurar(instruccion);
-        if(Param2.length() == 8){
+        if(Param2.length() == 16){
             Registros.put(Param1, Param2);
         }
         else{
             String dato = Registros.get(Param2);
             Registros.put(Param1, dato);
         }
+        return true;
     }
     
 }

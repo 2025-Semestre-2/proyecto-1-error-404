@@ -18,10 +18,10 @@ public class JNE extends JMP implements Instruccion{
     }
     
     @Override
-    public void EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception {
+    public boolean EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception {
         Registros = registros;
         if(AplicarPeso())
-            return;
+            return false;
         Desestructurar(instruccion);
         String banderaBits = Registros.get("00111");
         int bandera = ConversorAsignado.ConvertirBitsAInteger(banderaBits);
@@ -32,9 +32,10 @@ public class JNE extends JMP implements Instruccion{
             int direccionDesplazada = siguienteInstruccionEntero + desplazamiento;
             String bitsDesplazamiento = ConversorAsignado.ConvertirIntegerABits(direccionDesplazada);
             Registros.put("00000", bitsDesplazamiento);
+            return false;
         }
         else{
-            IrSiguienteInstruccion();
+            return true;
         }
     }
 }

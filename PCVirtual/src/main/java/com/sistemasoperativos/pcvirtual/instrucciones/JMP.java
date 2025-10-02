@@ -18,10 +18,10 @@ public class JMP extends InstruccionComunUnParametro implements Instruccion{
     }
 
     @Override
-    public void EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception {
+    public boolean EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception {
         Registros = registros;
         if(AplicarPeso())
-            return;
+            return false;
         Desestructurar(instruccion);
         String siguienteInstruccion = Registros.get("00000");
         int siguienteInstruccionEntero = ConversorAsignado.ConvertirBitsAInteger(siguienteInstruccion);
@@ -29,6 +29,7 @@ public class JMP extends InstruccionComunUnParametro implements Instruccion{
         int direccionDesplazada = siguienteInstruccionEntero + desplazamiento;
         String bitsDesplazamiento = ConversorAsignado.ConvertirIntegerABits(direccionDesplazada);
         Registros.put("00000", bitsDesplazamiento);
+        return false;
     }
     
     @Override

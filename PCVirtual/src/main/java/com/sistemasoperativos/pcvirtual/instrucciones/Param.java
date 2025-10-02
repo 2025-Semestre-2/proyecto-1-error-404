@@ -23,10 +23,10 @@ public class Param extends InstruccionComunDosParametros implements Instruccion{
     }
 
     @Override
-    public void EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception {
+    public boolean EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception {
         Registros = registros;
         if(AplicarPeso())
-            return;
+            return false;
         Desestructurar(instruccion);
         for(int seguimiento = 5; seguimiento < instruccion.length(); seguimiento += 5){
             String direccionBits = registros.get("01000");
@@ -42,15 +42,16 @@ public class Param extends InstruccionComunDosParametros implements Instruccion{
             direccionBits = ConversorAsignado.ConvertirIntegerABits(direccion);
             registros.put("01000", direccionBits);
         }
+        return true;
     }
     
     public void Desesctructurar(String instruccion){
-        Param1 = instruccion.substring(5, 10);
+        Param1 = instruccion.substring(5, 21);
         if(instruccion.length() <= 10)
             return;
-        Param2 = instruccion.substring(10, 15);
+        Param2 = instruccion.substring(21, 37);
         if(instruccion.length() <= 15)
             return;
-        Param3 = instruccion.substring(15, 20);
+        Param3 = instruccion.substring(37, 53);
     }
 }

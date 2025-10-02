@@ -18,11 +18,10 @@ public class Dec extends InstruccionComunUnParametro implements Instruccion{
     }
 
     @Override
-    public void EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception {
+    public boolean EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception {
         Registros = registros;
         if(AplicarPeso())
-            return;
-        AplicarPeso();
+            return false;
         if(instruccion.length() == 5){
             String dato = Registros.get("00001");
             int resultado = ConversorAsignado.ConvertirBitsAInteger(dato) - 1;
@@ -35,8 +34,8 @@ public class Dec extends InstruccionComunUnParametro implements Instruccion{
             int resultado = ConversorAsignado.ConvertirBitsAInteger(dato) - 1;
             String bits = ConversorAsignado.ConvertirIntegerABits(resultado);
             Registros.put(Param1, bits);
-            IrSiguienteInstruccion();
         }
+        return true;
     }
     
 }

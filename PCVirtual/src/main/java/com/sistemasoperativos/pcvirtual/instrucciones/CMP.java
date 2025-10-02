@@ -18,10 +18,10 @@ public class CMP extends InstruccionComunDosParametros implements Instruccion{
     }
 
     @Override
-    public void EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception {
+    public boolean EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception {
         Registros = registros;
         if(AplicarPeso())
-            return;
+            return false;
         Desestructurar(instruccion);
         int num1 = ConversorAsignado.ConvertirBitsAInteger(Param1);
         int num2 = ConversorAsignado.ConvertirBitsAInteger(Param2);
@@ -33,7 +33,7 @@ public class CMP extends InstruccionComunDosParametros implements Instruccion{
             String bandera = ConversorAsignado.ConvertirIntegerABits(0);
             registros.put("00111", bandera);
         }
-        IrSiguienteInstruccion();
+        return true;
     }
     
 }

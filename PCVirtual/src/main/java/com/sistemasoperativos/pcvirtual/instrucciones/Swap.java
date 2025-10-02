@@ -18,16 +18,16 @@ public class Swap extends InstruccionComunDosParametros implements Instruccion{
     }
 
     @Override
-    public void EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception {
+    public boolean EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception {
         Registros = registros;
         if(AplicarPeso())
-            return;
+            return false;
         Desestructurar(instruccion);
         String dato1 = Registros.get(Param1);
         String dato2 = Registros.get(Param2);
         Registros.put(Param1, dato2);
         Registros.put(Param2, dato1);
-        IrSiguienteInstruccion();
+        return true;
     }
     
 }

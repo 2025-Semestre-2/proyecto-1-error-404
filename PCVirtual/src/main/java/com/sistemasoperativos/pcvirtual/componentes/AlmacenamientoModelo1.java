@@ -55,7 +55,8 @@ public class AlmacenamientoModelo1 implements Almacenamiento {
         List<String> instrucciones = new ArrayList<>();
         for(int indice = direccionEntera; indice < tamano + direccionEntera; indice++){
             String direccionBusqueda = ConversorAsignado.ConvertirIntegerABits(indice);
-            instrucciones.add(direccionBusqueda);
+            String instruccion = Memoria.get(direccionBusqueda);
+            instrucciones.add(instruccion);
         }
         return instrucciones;
     }

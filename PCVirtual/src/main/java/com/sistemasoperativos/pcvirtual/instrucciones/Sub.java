@@ -18,10 +18,10 @@ public class Sub extends InstruccionComunUnParametro implements Instruccion{
     }
 
     @Override
-    public void EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception {
+    public boolean EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception {
         Registros = registros;
         if(AplicarPeso())
-            return;
+            return false;
         Desestructurar(instruccion);
         String param1 = Registros.get("00001");
         int num1 = ConversorAsignado.ConvertirBitsAInteger(param1);
@@ -30,7 +30,7 @@ public class Sub extends InstruccionComunUnParametro implements Instruccion{
         int resultado = num1 - num2;
         String resultadoBinario = ConversorAsignado.ConvertirIntegerABits(resultado);
         Registros.put("00001", resultadoBinario);
-        IrSiguienteInstruccion();
+        return true;
     }
     
 }

@@ -17,10 +17,10 @@ public class Inc extends InstruccionComunUnParametro implements Instruccion{
         super(conversor, peso);
     }
     @Override
-    public void EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception {
+    public boolean EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception {
         Registros = registros;
         if(AplicarPeso())
-            return;
+            return false;
         if(instruccion.length() == 5){
             String dato = Registros.get("00001");
             int resultado = ConversorAsignado.ConvertirBitsAInteger(dato) + 1;
@@ -34,7 +34,7 @@ public class Inc extends InstruccionComunUnParametro implements Instruccion{
             String bits = ConversorAsignado.ConvertirIntegerABits(resultado);
             Registros.put(Param1, bits);
         }
-        IrSiguienteInstruccion();
+        return true;
     }
     
 }

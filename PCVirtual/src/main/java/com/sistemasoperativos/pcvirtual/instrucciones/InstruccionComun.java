@@ -4,6 +4,7 @@
  */
 package com.sistemasoperativos.pcvirtual.instrucciones;
 
+import com.sistemasoperativos.pcvirtual.componentes.BUS;
 import com.sistemasoperativos.pcvirtual.componentes.Conversor;
 import java.util.Map;
 
@@ -27,18 +28,11 @@ public abstract class InstruccionComun {
     
     protected boolean AplicarPeso(){
         Contador++;
-        if(Contador != Peso){
+        if(Contador < Peso){
             return true;
         }
         Contador = 0;
         return false;
-    }
-    
-    protected void IrSiguienteInstruccion(){
-        String instruccionActual = Registros.get("00010");
-        int resultado = ConversorAsignado.ConvertirBitsAInteger(instruccionActual) + 1;
-        String siguienteInstruccion = ConversorAsignado.ConvertirIntegerABits(resultado);
-        Registros.put("00010", siguienteInstruccion);
     }
     
     protected abstract void Desestructurar(String lineaBinaria);

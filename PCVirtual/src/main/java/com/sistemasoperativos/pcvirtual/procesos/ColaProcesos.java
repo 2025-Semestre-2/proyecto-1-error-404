@@ -121,13 +121,10 @@ public class ColaProcesos {
                     bcpMenor = bcp;
                 }
             }
+            BCPs.remove(bcpMenor);
             colaOrdenada.add(bcpMenor);
         }
         return colaOrdenada;
-    }
-
-    public Queue<BCP> getProcesos() {
-        return cola;
     }
 }
 

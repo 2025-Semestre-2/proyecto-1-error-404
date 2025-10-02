@@ -22,10 +22,10 @@ public class Push extends InstruccionComunUnParametro implements Instruccion{
     }
 
     @Override
-    public void EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception {
+    public boolean EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception {
         Registros = registros;
         if(AplicarPeso())
-            return;
+            return false;
         Desestructurar(instruccion);
         String dato = Registros.get(Param1);
         String direccion = Registros.get("01000");
@@ -33,7 +33,7 @@ public class Push extends InstruccionComunUnParametro implements Instruccion{
         String nuevaDireccionBits = ConversorAsignado.ConvertirIntegerABits(nuevaDireccion);
         Registros.put("01000", nuevaDireccionBits);
         BUSAsignado.EscribirDatoRAM(direccion, dato);
-        IrSiguienteInstruccion();
+        return true;
     }
     
 }

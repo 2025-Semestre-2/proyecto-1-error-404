@@ -22,14 +22,14 @@ public class Store extends InstruccionComunUnParametro implements Instruccion{
     }
 
     @Override
-    public void EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception {
+    public boolean EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception {
         Registros = registros;
         if(AplicarPeso())
-            return;
+            return false;
         Desestructurar(instruccion);
         String dato = Registros.get("00001");
         String direccion = Registros.get(Param1);
         Bus.EscribirDatoRAM(direccion, dato);
-        IrSiguienteInstruccion();
+        return true;
     }
 }

@@ -24,42 +24,43 @@ public class Int extends InstruccionComunUnParametro implements Instruccion{
     }
 
     @Override
-    public void EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception {
+    public boolean EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception {
         Registros = registros;
         if(AplicarPeso())
-            return;
+            return false;
         Desestructurar(instruccion);
         switch (Param1) {
             case "00000":
-                EjecutarINT09H();
-                break;
+                return EjecutarINT09H();
             case "00001":
-                EjecutarINT10H();
-                break;
+                return EjecutarINT10H();
             case "00010":
-                EjecutarINT20H();
-                break;
+                return EjecutarINT20H();
             default:
-                break;
+                return true;
         }
     }
     
-    private void EjecutarINT09H(){
+    private boolean EjecutarINT09H() throws Exception{
         String dato = BusPantalla.Leer();
         if(!dato.isEmpty()){
             Registros.put("00110", dato);
-            IrSiguienteInstruccion();
+            return true;
         }
+        BUSAsignado.SolicitarNuevoPrograma();
+        throw new Exception("Se recibió una entrada vacía. Se ejecuta el siguiente proceso");
+        
     }
     
-    private void EjecutarINT10H(){
+    private boolean EjecutarINT10H() throws Exception{
         String dato = Registros.get("00110");
         BusPantalla.Escribir(dato);
-        IrSiguienteInstruccion();
+        return true;
     }
     
-    private void EjecutarINT20H() throws Exception{
+    private boolean EjecutarINT20H() throws Exception{
         BUSAsignado.SolicitarNuevoPrograma();
+        return true;
     }
     
 }

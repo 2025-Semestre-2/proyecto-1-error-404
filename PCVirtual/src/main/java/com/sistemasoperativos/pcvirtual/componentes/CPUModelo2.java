@@ -28,14 +28,13 @@ public class CPUModelo2 implements CPU{
      * SP = 01000
      */
     private Map<String, String> Registros;
-    
     private BUS2 BUSAsignado;
-    
-    private int ContadorPeso;
+    private Conversor ConversorAsignado;
     
     public CPUModelo2(Map<String, Instruccion> instrucciones, Map<String, String> registros){
         Instrucciones = instrucciones;
         Registros = crearRegistrosPorDefecto();
+        ConversorAsignado = new Conversor();
     }
     
     private Map<String, String> crearRegistrosPorDefecto() {
@@ -54,16 +53,28 @@ public class CPUModelo2 implements CPU{
     
     @Override
     public void EjecutarInstruccion() throws Exception {
-        String instruccionBits = Registros.get("00010").substring(0, 5);
-        if(instruccionBits.equals(0000000000000000)){
+        String instruccionBits = Registros.get("00010");
+        if(instruccionBits.equals("0000000000000000")){
             BUSAsignado.SolicitarNuevoPrograma();
-            instruccionBits = Registros.get("00010").substring(0, 5);
+            instruccionBits = Registros.get("00010");
         }
-        if(!Instrucciones.containsKey(instruccionBits)){
+        if(!Instrucciones.containsKey(instruccionBits.substring(0, 5))){
             throw new Exception("La instrucción " + instruccionBits + " no existe");
         }
-        Instruccion instruccion = Instrucciones.get(instruccionBits);
-        instruccion.EjecutarInstruccion(instruccionBits, Registros);
+        Instruccion instruccion = Instrucciones.get(instruccionBits.substring(0, 5));
+        boolean resultado = instruccion.EjecutarInstruccion(instruccionBits, Registros);
+        IrSiguienteInstruccion(resultado);
+    }
+    
+    private void IrSiguienteInstruccion(boolean resultado) throws Exception{
+        if(resultado){
+            String direccionActual = Registros.get("00000");
+            String nuevaInstruccion = BUSAsignado.LeerDatoRAM(direccionActual);
+            Registros.put("00010", nuevaInstruccion);
+            int nuevaDireccionEntera = ConversorAsignado.ConvertirBitsAInteger(direccionActual) + 1;
+            String nuevaDireccionBits = ConversorAsignado.ConvertirIntegerABits(nuevaDireccionEntera);
+            Registros.put("00000", nuevaDireccionBits);
+        }
     }
     
     @Override

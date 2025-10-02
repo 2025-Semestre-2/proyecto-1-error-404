@@ -22,10 +22,10 @@ public class Pop extends InstruccionComunUnParametro implements Instruccion{
     }
 
     @Override
-    public void EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception {
+    public boolean EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception {
         Registros = registros;
         if(AplicarPeso())
-            return;
+            return false;
         Desestructurar(instruccion);
         String direccion = Registros.get("01000");
         int nuevaDireccion = ConversorAsignado.ConvertirBitsAInteger(direccion) - 1;
@@ -33,6 +33,7 @@ public class Pop extends InstruccionComunUnParametro implements Instruccion{
         Registros.put("01000", nuevaDireccionBits);
         String dato = Registros.get(nuevaDireccionBits);
         Registros.put(Param1, dato);
+        return true;
     }
     
 }

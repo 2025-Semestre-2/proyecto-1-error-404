@@ -22,15 +22,15 @@ public class Load extends InstruccionComunUnParametro implements Instruccion{
     }
 
     @Override
-    public void EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception {
+    public boolean EjecutarInstruccion(String instruccion, Map<String, String> registros) throws Exception {
         Registros = registros;
         if(AplicarPeso())
-            return;
+            return false;
         Desestructurar(instruccion);
         String direccion = Registros.get(Param1);
         String dato = Bus.LeerDatoRAM(direccion);
         Registros.put("00001", dato);
-        IrSiguienteInstruccion();
+        return true;
     }
     
 }

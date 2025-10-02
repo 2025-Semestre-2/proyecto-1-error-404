@@ -131,10 +131,13 @@ public class PantallaGUI extends Application {
             Optional<ConfigPC> res = dlg.showAndWait();
             res.ifPresent(cfg -> {
                 if(cfg.getRamMB() > 0 && cfg.getAlmacenamientoMB() > 0) {
-                    controlador.CrearPC(cfg.getRamMB(), cfg.getAlmacenamientoMB());
-                    System.out.println("PC creada → RAM: " + cfg.getRamMB() + " MB, Almacenamiento: " + cfg.getAlmacenamientoMB() + " MB");
-                    actualizarTablas();
-                    ActualizarBCP();
+                    try {
+                        controlador.CrearPC(cfg.getRamMB(), cfg.getAlmacenamientoMB());
+                        System.out.println("PC creada → RAM: " + cfg.getRamMB() + " MB, Almacenamiento: " + cfg.getAlmacenamientoMB() + " MB");
+                        actualizarTablas();
+                    } catch (Exception ex) {
+                        System.out.println("Error al crear el PC: " + ex.getMessage());
+                    }
                 } else {
                     System.out.println("Error: valores inválidos para la PC");
                 }
@@ -150,9 +153,7 @@ public class PantallaGUI extends Application {
             try {
                 scheduler.shutdownNow();
                 controlador.EjecutarInstruccion();
-                actualizarRegistros();
                 actualizarTablas();
-                ActualizarBCP();
             } catch (Exception ex) {
                 ex.printStackTrace();
                 System.out.println("Error al ejecutar instrucciones: " + ex.getMessage());
@@ -164,7 +165,6 @@ public class PantallaGUI extends Application {
                 try {
                     controlador.EjecutarInstruccion();
                     actualizarTablas();
-                    ActualizarBCP();
                 } catch (Exception ex) {
                     System.out.println("Error: " + ex.getMessage());
                 }
@@ -252,10 +252,27 @@ public class PantallaGUI extends Application {
         datos.add("CPU asignado: " + bcp.getCpuAsignado());
         datos.add("Tiempo ejecutado: " + bcp.getTiempoEjecutado() + " ms");
 
-        // Agregamos registros principales
         Map<String, String> regs = bcp.getRegistros();
+        String[] ordenRegistros = { "00000", "00001", "00010", "00011", "00100", "00101", "00110", "00111", "01000" };
+        Map<String, String> nombreRegistro = Map.of(
+            "00000", "PC",
+            "00001", "AC",
+            "00010", "IR",
+            "00011", "AX",
+            "00100", "BX",
+            "00101", "CX",
+            "00110", "DX",
+            "00111", "CP",
+            "01000", "SP"
+        );
+
         datos.add("Registros:");
-        regs.forEach((k,v) -> datos.add("  " + k + " = " + v));
+        for(String codigo : ordenRegistros){
+            String valor = regs.get(codigo);
+            String nombre = nombreRegistro.get(codigo);
+            datos.add("  " + nombre + " = " + valor);
+        }
+
 
         listaBPC.setItems(datos);
     }

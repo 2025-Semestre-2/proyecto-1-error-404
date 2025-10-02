@@ -17,7 +17,7 @@ import java.util.Queue;
  */
 
 public class Planificador {
-    private final ColaProcesos colaListos;
+    private ColaProcesos colaListos;
     private BUS2 BUSAsignado;
     private LinkedList<String> DireccionesProgramas;
     private LinkedList<String> NombresProgramas;
@@ -27,7 +27,7 @@ public class Planificador {
     private BCP BCPActual;
 
     public Planificador(LinkedList<String> direccionesPrograma, LinkedList<String> nombresProgramas) {
-        this.colaListos = new ColaProcesos();
+        colaListos = new ColaProcesos();
         BUSAsignado = null;
         ConversorAsignado = new Conversor();
         CantidadProgramas = 0;
@@ -36,8 +36,6 @@ public class Planificador {
     }
 
     public void agregarProceso() throws Exception {
-        System.out.println(DireccionesProgramas.toString());
-        System.out.println(NombresProgramas.toString());
         while(!DireccionesProgramas.isEmpty() && !colaListos.estaLleno()){
             String direccionMemoriaPrograma = DireccionesProgramas.removeLast();
             List<String> programa = BUSAsignado.LeerAlmacenamiento(direccionMemoriaPrograma);
