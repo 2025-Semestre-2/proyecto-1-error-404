@@ -1,6 +1,5 @@
 package com.sistemasoperativos.pcvirtual.gui;
 
-import com.sistemasoperativos.pcvirtual.componentes.BUSPantalla;
 import com.sistemasoperativos.pcvirtual.controlador.Controlador;
 import com.sistemasoperativos.pcvirtual.procesos.BCP;
 import java.io.File;
@@ -99,7 +98,7 @@ public class PantallaGUI extends Application {
         tablaDisco = crearTablaMemoriaDisco();
         panelDisco.getChildren().addAll(lblDisco, tablaDisco);
 
-        HBox panelTablas = new HBox(20, panelMem, panelDisk);
+        HBox panelTablas = new HBox(20, panelMemoria, panelDisco);
 
         // ------------------- Panel inferior: Pantalla -------------------
         Label lblPantalla = new Label("Pantalla");
@@ -107,23 +106,23 @@ public class PantallaGUI extends Application {
         pantallaEntrada.setPromptText(">> Ingresar valor:");
         pantallaSalida = new TextArea();
         pantallaSalida.setEditable(false);
+
         VBox panelPantalla = new VBox(5, lblPantalla, pantallaEntrada, pantallaSalida);
         panelPantalla.setPadding(new Insets(10));
         panelPantalla.setStyle("-fx-border-color: black; -fx-border-width: 1;");
-        panelPantalla.setPrefHeight(160);
+        panelPantalla.setPrefHeight(150);
 
         // ------------------- Layout principal -------------------
         BorderPane root = new BorderPane();
-        root.setTop(barra);
-        root.setLeft(izq);
-        root.setCenter(boxBPC);
+        root.setTop(barraAcciones);
+        root.setLeft(panelIzq);
+        root.setCenter(panelBPC);
         root.setRight(panelTablas);
         root.setBottom(panelPantalla);
 
-        Scene scene = new Scene(root, 1000, 600);
+        Scene scene = new Scene(root, 950, 550);
         primaryStage.setScene(scene);
         primaryStage.show();
-        // ====== “BUS de pantalla” inline (sin archivos nuevos) ======
 
         // ------------------- Acciones -------------------
 
@@ -135,6 +134,7 @@ public class PantallaGUI extends Application {
                     controlador.CrearPC(cfg.getRamMB(), cfg.getAlmacenamientoMB());
                     System.out.println("PC creada → RAM: " + cfg.getRamMB() + " MB, Almacenamiento: " + cfg.getAlmacenamientoMB() + " MB");
                     actualizarTablas();
+                    ActualizarBCP();
                 } else {
                     System.out.println("Error: valores inválidos para la PC");
                 }
@@ -150,7 +150,9 @@ public class PantallaGUI extends Application {
             try {
                 scheduler.shutdownNow();
                 controlador.EjecutarInstruccion();
+                actualizarRegistros();
                 actualizarTablas();
+                ActualizarBCP();
             } catch (Exception ex) {
                 ex.printStackTrace();
                 System.out.println("Error al ejecutar instrucciones: " + ex.getMessage());
@@ -162,6 +164,7 @@ public class PantallaGUI extends Application {
                 try {
                     controlador.EjecutarInstruccion();
                     actualizarTablas();
+                    ActualizarBCP();
                 } catch (Exception ex) {
                     System.out.println("Error: " + ex.getMessage());
                 }
