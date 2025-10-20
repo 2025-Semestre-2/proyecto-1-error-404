@@ -30,8 +30,6 @@ public class Int extends InstruccionComunUnParametro implements Instruccion{
             return false;
         Desestructurar(instruccion);
         switch (Param1) {
-            case "00000":
-                return EjecutarINT09H();
             case "00001":
                 return EjecutarINT10H();
             case "00010":
@@ -39,17 +37,6 @@ public class Int extends InstruccionComunUnParametro implements Instruccion{
             default:
                 return true;
         }
-    }
-    
-    private boolean EjecutarINT09H() throws Exception{
-        String dato = BusPantalla.Leer();
-        if(!dato.isEmpty()){
-            Registros.put("00110", dato);
-            return true;
-        }
-        BUSAsignado.SolicitarNuevoPrograma();
-        throw new Exception("Se recibió una entrada vacía. Se ejecuta el siguiente proceso");
-        
     }
     
     private boolean EjecutarINT10H() throws Exception{

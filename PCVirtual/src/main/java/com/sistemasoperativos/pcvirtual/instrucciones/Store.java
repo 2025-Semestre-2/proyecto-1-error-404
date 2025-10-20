@@ -28,8 +28,7 @@ public class Store extends InstruccionComunUnParametro implements Instruccion{
             return false;
         Desestructurar(instruccion);
         String dato = Registros.get("00001");
-        String direccion = Registros.get(Param1);
-        Bus.EscribirDatoRAM(direccion, dato);
+        Registros.put(Param1, dato);
         return true;
     }
 }

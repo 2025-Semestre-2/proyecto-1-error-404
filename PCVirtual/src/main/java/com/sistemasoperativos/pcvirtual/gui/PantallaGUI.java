@@ -33,6 +33,11 @@ public class PantallaGUI extends Application {
     private TableView<MemoriaFila> tablaDisco;
     private TableView<MemoriaFila> tablaRegistros;
     private ListView<String> listaBPC;
+    
+    private TableView<MemoriaFila> tablaRegistrosCristiano;
+    private ListView<String>  listaBCPCristiano;
+    private TableView<MemoriaFila> tablaMemoriaCristiano;
+    private TableView<MemoriaFila> tablaDiscoCristiano;
 
     @Override
     public void start(Stage primaryStage) {
@@ -58,6 +63,7 @@ public class PantallaGUI extends Application {
 
         Button btnCargar = new Button("Cargar archivo");
 
+        // Tabla de registros normal
         tablaRegistros = new TableView<>();
         tablaRegistros.setPlaceholder(new Label("Registros CPU"));
 
@@ -70,33 +76,58 @@ public class PantallaGUI extends Application {
         tablaRegistros.getColumns().addAll(colRegNombre, colRegValor);
         VBox.setVgrow(tablaRegistros, Priority.ALWAYS);
 
-        panelIzq.getChildren().addAll(btnCargar, tablaRegistros);
+        // Tabla de registros Cristiano
+        Label lblRegCristiano = new Label("Registros Cristiano");
+        tablaRegistrosCristiano = new TableView<>();
+        tablaRegistrosCristiano.setPlaceholder(new Label("Registros CPU Cristiano"));
 
-        // ------------------- Panel central: BPC actual -------------------
+        TableColumn<MemoriaFila, String> colRegCristianoNombre = new TableColumn<>("Registro");
+        colRegCristianoNombre.setCellValueFactory(data -> data.getValue().llaveProperty());
+
+        TableColumn<MemoriaFila, String> colRegCristianoValor = new TableColumn<>("Valor");
+        colRegCristianoValor.setCellValueFactory(data -> data.getValue().valorProperty());
+
+        tablaRegistrosCristiano.getColumns().addAll(colRegCristianoNombre, colRegCristianoValor);
+
+        panelIzq.getChildren().addAll(btnCargar, tablaRegistros, lblRegCristiano, tablaRegistrosCristiano);
+
+        // ------------------- Panel central: BCP -------------------
         VBox panelBPC = new VBox(10);
         panelBPC.setPadding(new Insets(10));
         panelBPC.setPrefWidth(250);
 
         Label lblBPC = new Label("BCP actual CPU1");
-
         listaBPC = new ListView<>();
         listaBPC.setPrefHeight(200);
         listaBPC.setPlaceholder(new Label("Sin BCP activo"));
 
-        panelBPC.getChildren().addAll(lblBPC, listaBPC);
+        Label lblBCPCristiano = new Label("BCP Cristiano");
+        listaBCPCristiano = new ListView<>();
+        listaBCPCristiano.setPrefHeight(200);
+        listaBCPCristiano.setPlaceholder(new Label("Sin BCP Cristiano activo"));
+
+        panelBPC.getChildren().addAll(lblBPC, listaBPC, lblBCPCristiano, listaBCPCristiano);
 
         // ------------------- Panel derecho: Memoria y Disco -------------------
         VBox panelMemoria = new VBox(5);
         panelMemoria.setPadding(new Insets(10));
         Label lblMemoria = new Label("Memoria");
         tablaMemoria = crearTablaMemoriaDisco();
-        panelMemoria.getChildren().addAll(lblMemoria, tablaMemoria);
+
+        Label lblMemoriaCristiano = new Label("Memoria Cristiano");
+        tablaMemoriaCristiano = crearTablaMemoriaDisco();
+
+        panelMemoria.getChildren().addAll(lblMemoria, tablaMemoria, lblMemoriaCristiano, tablaMemoriaCristiano);
 
         VBox panelDisco = new VBox(5);
         panelDisco.setPadding(new Insets(10));
         Label lblDisco = new Label("Disco");
         tablaDisco = crearTablaMemoriaDisco();
-        panelDisco.getChildren().addAll(lblDisco, tablaDisco);
+
+        Label lblDiscoCristiano = new Label("Disco Cristiano");
+        tablaDiscoCristiano = crearTablaMemoriaDisco();
+
+        panelDisco.getChildren().addAll(lblDisco, tablaDisco, lblDiscoCristiano, tablaDiscoCristiano);
 
         HBox panelTablas = new HBox(20, panelMemoria, panelDisco);
 
@@ -120,7 +151,7 @@ public class PantallaGUI extends Application {
         root.setRight(panelTablas);
         root.setBottom(panelPantalla);
 
-        Scene scene = new Scene(root, 950, 550);
+        Scene scene = new Scene(root, 1100, 650);
         primaryStage.setScene(scene);
         primaryStage.show();
 
@@ -216,6 +247,14 @@ public class PantallaGUI extends Application {
         ObservableList<MemoriaFila> datos = FXCollections.observableArrayList();
         memoria.forEach((k,v) -> datos.add(new MemoriaFila(k,v)));
         tablaMemoria.setItems(datos);
+        actualizarMemoriaCristiana(memoria);
+    }
+    
+    private void actualizarMemoriaCristiana(Map<String, String> memoria){
+        Map<String, String> memoriaCristiana = ConversorMemoria.ConvertirACristiano(memoria);
+        ObservableList<MemoriaFila> datos = FXCollections.observableArrayList();
+        memoriaCristiana.forEach((k,v) -> datos.add(new MemoriaFila(k,v)));
+        tablaMemoriaCristiano.setItems(datos);
     }
 
     private void actualizarDisco(){
@@ -223,6 +262,14 @@ public class PantallaGUI extends Application {
         ObservableList<MemoriaFila> datos = FXCollections.observableArrayList();
         disco.forEach((k,v) -> datos.add(new MemoriaFila(k,v)));
         tablaDisco.setItems(datos);
+        actualizarDiscoCristiano(disco);
+    }
+    
+    private void actualizarDiscoCristiano(Map<String, String> memoria){
+        Map<String, String> discoCristiano = ConversorMemoria.ConvertirACristiano(memoria);
+        ObservableList<MemoriaFila> datos = FXCollections.observableArrayList();
+        discoCristiano.forEach((k,v) -> datos.add(new MemoriaFila(k,v)));
+        tablaDiscoCristiano.setItems(datos);
     }
 
     private void actualizarRegistros(){
@@ -231,9 +278,18 @@ public class PantallaGUI extends Application {
             ObservableList<MemoriaFila> datos = FXCollections.observableArrayList();
             registros.forEach((k,v) -> datos.add(new MemoriaFila(k,v)));
             tablaRegistros.setItems(datos);
+            actualizarRegistrosCristiano(registros);
         }catch(Exception ex){
             System.out.println("Error al traer registros: " + ex.getMessage());
         }
+    }
+    
+    private void actualizarRegistrosCristiano(Map<String, String> registros){
+        Map<String, String> registrosCristianos = ConversorRegistros.ConvertirACristiano(registros);
+        System.out.println(registrosCristianos.toString());
+        ObservableList<MemoriaFila> datos = FXCollections.observableArrayList();
+        registrosCristianos.forEach((k,v) -> datos.add(new MemoriaFila(k,v)));
+        tablaRegistrosCristiano.setItems(datos);
     }
 
     // ------------------- Actualizar BCP actual -------------------
@@ -275,6 +331,25 @@ public class PantallaGUI extends Application {
 
 
         listaBPC.setItems(datos);
+        actualizarBCPCristiano(bcp);
+    }
+    
+    private void actualizarBCPCristiano(BCP bcp){
+        ObservableList<String> datos = FXCollections.observableArrayList();
+        datos.add("ID: " + bcp.getID());
+        datos.add("Nombre: " + bcp.getNombre());
+        datos.add("Estado: " + bcp.getEstado());
+        datos.add("CPU asignado: " + bcp.getCpuAsignado());
+        datos.add("Tiempo ejecutado: " + bcp.getTiempoEjecutado() + " ms");
+        Map<String, String> registros = bcp.getRegistros();
+        Map<String, String> registrosCristianos = ConversorRegistros.ConvertirACristiano(registros);
+        datos.add("Registros:");
+        for(Map.Entry<String, String> registro : registrosCristianos.entrySet()){
+            String nombre = registro.getKey();
+            String valor = registro.getValue();
+            datos.add("  " + nombre + " = " + valor);
+        }
+        listaBCPCristiano.setItems(datos);
     }
 
     // ------------------- Limpiar tablas -------------------
@@ -283,6 +358,10 @@ public class PantallaGUI extends Application {
         tablaDisco.getItems().clear();
         tablaRegistros.getItems().clear();
         listaBPC.getItems().clear();
+        tablaRegistrosCristiano.getItems().clear();
+        listaBCPCristiano.getItems().clear();
+        tablaMemoriaCristiano.getItems().clear();
+        tablaDiscoCristiano.getItems().clear();
     }
 
     // ------------------- Clase para filas -------------------

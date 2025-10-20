@@ -1,7 +1,7 @@
 package com.sistemasoperativos.pcvirtual.procesos;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,7 +33,7 @@ public class BCP {
         this.estado = EstadoBCP.NUEVO;
 
         // Inicializar registros a "00000000"
-        this.registros = new HashMap<>();
+        this.registros = new LinkedHashMap<>();
         String[] codigos = {
             "00000", // PC
             "00001", // AC

@@ -146,22 +146,22 @@ public class Controlador {
      */
     private void CrearInstrucciones(Map<String, Instruccion> instrucciones, BUS2 bus,
             Conversor conversor, BUSPantalla busPantalla){
-        instrucciones.put("00000", new Load(conversor, 2, bus)); // LOAD
-        instrucciones.put("00001", new Store(conversor, 2, bus)); // STORE
+        instrucciones.put("00000", new Load(conversor, 1, bus)); // LOAD
+        instrucciones.put("00001", new Store(conversor, 1, bus)); // STORE
         instrucciones.put("00010", new Mov(conversor, 1)); // MOV
-        instrucciones.put("00011", new Add(conversor, 3)); // ADD
-        instrucciones.put("00100", new Sub(conversor, 3)); // SUB
+        instrucciones.put("00011", new Add(conversor, 1)); // ADD
+        instrucciones.put("00100", new Sub(conversor, 1)); // SUB
         instrucciones.put("00101", new Inc(conversor, 1)); // INC
         instrucciones.put("00110", new Dec(conversor, 1)); // DEC
         instrucciones.put("00111", new Swap(conversor, 1)); // SWAP
         instrucciones.put("01000", new Int(conversor, 1, busPantalla, bus)); // INT
-        instrucciones.put("01001", new JMP(conversor, 2)); // JMP
+        instrucciones.put("01001", new JMP(conversor, 1, bus)); // JMP
         instrucciones.put("01010", new CMP(conversor, 1)); // CMP
-        instrucciones.put("01011", new JE(conversor, 2)); // JE
-        instrucciones.put("01100", new JNE(conversor, 2)); // JNE
-        instrucciones.put("01101", new Param(conversor, 2, bus)); // PARAM
-        instrucciones.put("01110", new Push(conversor, 2, bus)); // PUSH
-        instrucciones.put("01111", new Pop(conversor, 2, bus)); // POP
+        instrucciones.put("01011", new JE(conversor, 1, bus)); // JE
+        instrucciones.put("01100", new JNE(conversor, 1, bus)); // JNE
+        instrucciones.put("01101", new Param(conversor, 1, bus)); // PARAM
+        instrucciones.put("01110", new Push(conversor, 1, bus)); // PUSH
+        instrucciones.put("01111", new Pop(conversor, 1, bus)); // POP
     }
     
     public void EjecutarInstruccion() throws Exception{

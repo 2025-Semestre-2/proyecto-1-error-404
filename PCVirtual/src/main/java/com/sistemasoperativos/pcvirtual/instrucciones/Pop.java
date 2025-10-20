@@ -31,7 +31,9 @@ public class Pop extends InstruccionComunUnParametro implements Instruccion{
         int nuevaDireccion = ConversorAsignado.ConvertirBitsAInteger(direccion) - 1;
         String nuevaDireccionBits = ConversorAsignado.ConvertirIntegerABits(nuevaDireccion);
         Registros.put("01000", nuevaDireccionBits);
-        String dato = Registros.get(nuevaDireccionBits);
+        String dato = Bus.LeerDatoRAM(nuevaDireccionBits);
+        if(dato.length() != 16)
+            throw new Exception("El pop está accediendo al código del programa y no a la sección de la pila");
         Registros.put(Param1, dato);
         return true;
     }

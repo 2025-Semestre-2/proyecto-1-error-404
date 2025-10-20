@@ -27,8 +27,7 @@ public class Load extends InstruccionComunUnParametro implements Instruccion{
         if(AplicarPeso())
             return false;
         Desestructurar(instruccion);
-        String direccion = Registros.get(Param1);
-        String dato = Bus.LeerDatoRAM(direccion);
+        String dato = Registros.get(Param1);
         Registros.put("00001", dato);
         return true;
     }

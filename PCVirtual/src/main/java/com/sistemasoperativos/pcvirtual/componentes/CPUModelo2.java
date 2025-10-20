@@ -48,6 +48,8 @@ public class CPUModelo2 implements CPU{
         registros.put("00110", "0000000000000000");
         registros.put("00111", "0000000000000000"); // Contador de pila
         registros.put("01000", "0000000000000000"); // Stack pointer
+        registros.put("01001", "0000000000000000");
+        registros.put("01010", "0000000000000000");
         return registros;
     }
     

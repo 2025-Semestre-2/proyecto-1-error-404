@@ -23,8 +23,11 @@ public class CMP extends InstruccionComunDosParametros implements Instruccion{
         if(AplicarPeso())
             return false;
         Desestructurar(instruccion);
-        int num1 = ConversorAsignado.ConvertirBitsAInteger(Param1);
-        int num2 = ConversorAsignado.ConvertirBitsAInteger(Param2);
+        String numBits1 = registros.get(Param1);
+        String numBits2 = registros.get(Param2);
+        int num1 = ConversorAsignado.ConvertirBitsAInteger(numBits1);
+        int num2 = ConversorAsignado.ConvertirBitsAInteger(numBits2);
+        System.out.println(num1 + " " + num2);
         if(num1 == num2){
             String bandera = ConversorAsignado.ConvertirIntegerABits(1);
             registros.put("00111", bandera);

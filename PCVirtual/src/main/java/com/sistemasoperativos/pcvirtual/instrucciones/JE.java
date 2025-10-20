@@ -4,6 +4,7 @@
  */
 package com.sistemasoperativos.pcvirtual.instrucciones;
 
+import com.sistemasoperativos.pcvirtual.componentes.BUS;
 import com.sistemasoperativos.pcvirtual.componentes.Conversor;
 import java.util.Map;
 
@@ -13,8 +14,8 @@ import java.util.Map;
  */
 public class JE extends JMP implements Instruccion{
 
-    public JE(Conversor conversor, int peso) {
-        super(conversor, peso);
+    public JE(Conversor conversor, int peso, BUS bus) {
+        super(conversor, peso, bus);
     }
 
     @Override
@@ -26,13 +27,7 @@ public class JE extends JMP implements Instruccion{
         String banderaBits = Registros.get("00111");
         int bandera = ConversorAsignado.ConvertirBitsAInteger(banderaBits);
         if(bandera == 1){
-            String siguienteInstruccion = Registros.get("00000");
-            int siguienteInstruccionEntero = ConversorAsignado.ConvertirBitsAInteger(siguienteInstruccion);
-            int desplazamiento = ConversorAsignado.ConvertirBitsAInteger(Param1);
-            int direccionDesplazada = siguienteInstruccionEntero + desplazamiento;
-            String bitsDesplazamiento = ConversorAsignado.ConvertirIntegerABits(direccionDesplazada);
-            Registros.put("00000", bitsDesplazamiento);
-            return false;
+            return super.EjecutarInstruccion(instruccion, registros);
         }
         return true;
     }
