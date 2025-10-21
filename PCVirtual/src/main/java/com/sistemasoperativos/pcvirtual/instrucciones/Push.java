@@ -28,11 +28,16 @@ public class Push extends InstruccionComunUnParametro implements Instruccion{
             return false;
         Desestructurar(instruccion);
         String dato = Registros.get(Param1);
-        String direccion = Registros.get("01000");
-        int nuevaDireccion = ConversorAsignado.ConvertirBitsAInteger(direccion) + 1;
-        String nuevaDireccionBits = ConversorAsignado.ConvertirIntegerABits(nuevaDireccion);
-        Registros.put("01000", nuevaDireccionBits);
-        BUSAsignado.EscribirDatoRAM(direccion, dato);
+        String direccionBits = Registros.get("01000");
+        int direccion = ConversorAsignado.ConvertirBitsAInteger(direccionBits);
+        String limiteBits = Registros.get("01010");
+        int limite = ConversorAsignado.ConvertirBitsAInteger(limiteBits);
+        if(limite < direccion)
+            throw new Error("Se ha desbordado la pila");
+        BUSAsignado.EscribirDatoRAM(direccionBits, dato);
+        direccion++;
+        direccionBits = ConversorAsignado.ConvertirIntegerABits(direccion);
+        Registros.put("01000", direccionBits);
         return true;
     }
     

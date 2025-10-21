@@ -6,6 +6,8 @@ package com.sistemasoperativos.pcvirtual.instrucciones;
 
 import com.sistemasoperativos.pcvirtual.componentes.BUS;
 import com.sistemasoperativos.pcvirtual.componentes.Conversor;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -15,11 +17,13 @@ import java.util.Map;
 public class Param extends InstruccionComunDosParametros implements Instruccion{
 
     private BUS BUSAsignado;
+    private List<String> Parametros;
     private String Param3;
     
     public Param(Conversor conversor, int peso, BUS bus) {
         super(conversor, peso);
         BUSAsignado = bus;
+        Parametros = new ArrayList<>();
     }
 
     @Override
@@ -28,30 +32,36 @@ public class Param extends InstruccionComunDosParametros implements Instruccion{
         if(AplicarPeso())
             return false;
         Desestructurar(instruccion);
-        for(int seguimiento = 5; seguimiento < instruccion.length(); seguimiento += 5){
-            String direccionBits = registros.get("01000");
-            switch(seguimiento){
-                case 5:
-                    BUSAsignado.EscribirDatoRAM(direccionBits, Param1);
-                case 10:
-                    BUSAsignado.EscribirDatoRAM(direccionBits, Param2);
-                case 15:
-                    BUSAsignado.EscribirDatoRAM(direccionBits, Param3);
-            }
-            int direccion = ConversorAsignado.ConvertirBitsAInteger(direccionBits)+1;
+        String direccionBits = Registros.get("01000");
+        int direccion = ConversorAsignado.ConvertirBitsAInteger(direccionBits);
+        String limiteBits = Registros.get("01010");
+        int limite = ConversorAsignado.ConvertirBitsAInteger(limiteBits);
+        for(String parametro : Parametros){
+            if(direccion > limite)
+                throw new Error("Se ha desbordado la pila");
+            BUSAsignado.EscribirDatoRAM(direccionBits, parametro);
+            direccion++;
             direccionBits = ConversorAsignado.ConvertirIntegerABits(direccion);
-            registros.put("01000", direccionBits);
         }
+        Registros.put("01000", direccionBits);
         return true;
     }
     
-    public void Desesctructurar(String instruccion){
+    @Override
+    protected void Desestructurar(String instruccion){
+        Parametros.clear();
+        Param1 = "";
+        Param2 = "";
+        Param3 = "";
         Param1 = instruccion.substring(5, 21);
-        if(instruccion.length() <= 10)
+        Parametros.add(Param1);
+        if(instruccion.length() < 37)
             return;
         Param2 = instruccion.substring(21, 37);
-        if(instruccion.length() <= 15)
+        Parametros.add(Param2);
+        if(instruccion.length() < 53)
             return;
         Param3 = instruccion.substring(37, 53);
+        Parametros.add(Param3);
     }
 }

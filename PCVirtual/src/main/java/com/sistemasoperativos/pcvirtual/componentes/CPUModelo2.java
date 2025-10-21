@@ -26,6 +26,8 @@ public class CPUModelo2 implements CPU{
      * DX = 00110
      * CP = 00111
      * SP = 01000
+     * BS = 01001
+     * LI = 01010
      */
     private Map<String, String> Registros;
     private BUS2 BUSAsignado;
