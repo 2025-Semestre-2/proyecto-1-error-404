@@ -62,6 +62,7 @@ public class CPUModelo2 implements CPU{
             return;
         }
         if(!Instrucciones.containsKey(instruccionBits.substring(0, 5))){
+            crearRegistrosPorDefecto();
             throw new Exception("La instrucción " + instruccionBits + " no existe");
         }
         Instruccion instruccion = Instrucciones.get(instruccionBits.substring(0, 5));

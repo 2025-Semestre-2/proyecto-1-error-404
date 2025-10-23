@@ -4,6 +4,7 @@
  */
 package algoritmos;
 
+import com.sistemasoperativos.pcvirtual.componentes.BUS2;
 import java.util.List;
 import java.util.Map;
 
@@ -14,4 +15,5 @@ import java.util.Map;
 public interface Algoritmo {
     public void IniciarEjecucion(); //Recordar que cada CPU debe estar en un hilo aparte
     public List<Map<String, String>> ObtenerBCPs();
+    public void AsignarBUS(BUS2 bus);
 }

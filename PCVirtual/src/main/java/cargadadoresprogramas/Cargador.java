@@ -13,5 +13,6 @@ import java.util.Map;
  * @author andrewdeni
  */
 public interface Cargador {
-    public Map<String, Integer> CargarPrograma(BCP bcp, List<String> programa) throws Exception;
+    //Mapa con el registro base y el registro limite
+    public void CargarPrograma(BCP bcp) throws Exception;
 }

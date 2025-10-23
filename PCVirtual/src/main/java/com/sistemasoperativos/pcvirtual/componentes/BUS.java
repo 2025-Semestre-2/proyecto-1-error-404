@@ -16,7 +16,10 @@ public interface BUS {
     public void EscribirDatoRAM(String direccion, String dato) throws Exception;
     public String LeerDatoRAM(String direccion) throws Exception;
     public List<Map<String, String>> ObtenerRegistrosCPU() throws Exception;
-    public void EjecutarInstruccionCPU() throws Exception;
+    public void EjecutarInstruccionCPU1() throws Exception;
+    public void EjecutarInstruccionCPU2() throws Exception;
+    public void EjecutarInstruccionCPU3() throws Exception;
+    public void EjecutarInstruccionCPU4() throws Exception;
     public void AsignarRAM(RAM ram);
     public void AsignarCPU(CPU cpu);
 }
