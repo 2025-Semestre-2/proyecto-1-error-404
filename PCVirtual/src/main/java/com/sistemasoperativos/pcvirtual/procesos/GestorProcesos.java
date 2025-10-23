@@ -22,7 +22,7 @@ public class GestorProcesos {
     }
     
     public void Ejecutar(){
-        Planificador.Ejecutar();
+        Planificador.IniciarEjecucion();
     }
 
     public List<Map<String, String>> ObtenerBCPs() {

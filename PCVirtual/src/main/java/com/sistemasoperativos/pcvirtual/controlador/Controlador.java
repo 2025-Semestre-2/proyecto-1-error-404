@@ -1,5 +1,6 @@
 package com.sistemasoperativos.pcvirtual.controlador;
 
+import algoritmos.Algoritmo;
 import com.sistemasoperativos.pcvirtual.compilador.AdmnistradorProgramasNuevos;
 import com.sistemasoperativos.pcvirtual.componentes.Almacenamiento;
 import com.sistemasoperativos.pcvirtual.componentes.AlmacenamientoModelo1;
@@ -32,10 +33,10 @@ import com.sistemasoperativos.pcvirtual.instrucciones.CMP;
 import com.sistemasoperativos.pcvirtual.instrucciones.Param;
 import com.sistemasoperativos.pcvirtual.procesos.BCP;
 import com.sistemasoperativos.pcvirtual.procesos.GestorProcesos;
-import com.sistemasoperativos.pcvirtual.procesos.Planificador;
 import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -77,10 +78,9 @@ public class Controlador {
         CPU cpu = new CPUModelo2(instrucciones, registros);
         LinkedList<String> direccionesProgramas = new LinkedList();
         LinkedList<String> nombresProgramas = new LinkedList();
-        Planificador planificador = new Planificador(direccionesProgramas, nombresProgramas);
-        BUS2 bus = new BUSModelo2(ram, cpu, planificador, almacenamiento);
+        Algoritmo planificador = null;
+        BUS2 bus = new BUSModelo2(almacenamiento);
         cpu.AsignarBUS(bus);
-        planificador.AsignarBUS(bus);
         BUSPantalla busPantalla = new BUSPantallaModelo1(this);
         CrearInstrucciones(instrucciones, bus, conversor, busPantalla);
         AdministradorProgramas = new AdmnistradorProgramasNuevos(nombresProgramas, direccionesProgramas, bus);
@@ -165,29 +165,12 @@ public class Controlador {
     }
     
     public void EjecutarInstruccion() throws Exception{
-        Gestor.crearProceso();
+        Gestor.Ejecutar();
         BUSAsignado.EjecutarInstruccionCPU();
     }
     
     public void CargarPrograma(File archivo) throws Exception{
         AdministradorProgramas.CargarPrograma(archivo);
-        Gestor.crearProceso();
-    }
-    
-    public Map<String, String> TraerRegistros() throws Exception{
-        return BUSAsignado.ObtenerRegistrosCPU();
-    }
-    
-    public BCP TraerBCPActual(){
-        return Gestor.getProcesoActual();
-    }
-    
-    public Map<String, String> TraerMemoriaActual(){
-        return BUSAsignado.TraerMemoriaRAM();
-    }
-    
-    public Map<String, String> TraerAlmacenamiento() {
-        return BUSAsignado.TraerAlmacenamiento();
     }
     
     public String Leer(){

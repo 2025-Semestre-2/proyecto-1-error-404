@@ -12,6 +12,6 @@ import java.util.Map;
  * @author andrewdeni
  */
 public interface Algoritmo {
-    public void Ejecutar();
+    public void IniciarEjecucion(); //Recordar que cada CPU debe estar en un hilo aparte
     public List<Map<String, String>> ObtenerBCPs();
 }

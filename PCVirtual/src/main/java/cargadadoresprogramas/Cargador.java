@@ -6,11 +6,12 @@ package cargadadoresprogramas;
 
 import com.sistemasoperativos.pcvirtual.procesos.BCP;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
  * @author andrewdeni
  */
 public interface Cargador {
-    public void CargarPrograma(BCP bcp, List<String> programa) throws Exception;
+    public Map<String, Integer> CargarPrograma(BCP bcp, List<String> programa) throws Exception;
 }

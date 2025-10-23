@@ -46,7 +46,6 @@ public class Int extends InstruccionComunUnParametro implements Instruccion{
     }
     
     private boolean EjecutarINT20H() throws Exception{
-        BUSAsignado.SolicitarNuevoPrograma();
         Registros.put("00000", "0000000000000000"); // Contador de programa
         Registros.put("00001", "0000000000000000"); // Acumulador
         Registros.put("00010", "0000000000000000"); // Registro de instrucción
