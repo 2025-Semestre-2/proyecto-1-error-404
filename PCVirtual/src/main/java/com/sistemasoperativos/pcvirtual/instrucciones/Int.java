@@ -47,7 +47,18 @@ public class Int extends InstruccionComunUnParametro implements Instruccion{
     
     private boolean EjecutarINT20H() throws Exception{
         BUSAsignado.SolicitarNuevoPrograma();
-        return true;
+        Registros.put("00000", "0000000000000000"); // Contador de programa
+        Registros.put("00001", "0000000000000000"); // Acumulador
+        Registros.put("00010", "0000000000000000"); // Registro de instrucción
+        Registros.put("00011", "0000000000000000");
+        Registros.put("00100", "0000000000000000");
+        Registros.put("00101", "0000000000000000");
+        Registros.put("00110", "0000000000000000");
+        Registros.put("00111", "0000000000000000"); // Contador de pila
+        Registros.put("01000", "0000000000000000"); // Stack pointer
+        Registros.put("01001", "0000000000000000");
+        Registros.put("01010", "0000000000000000");
+        return false;
     }
     
 }

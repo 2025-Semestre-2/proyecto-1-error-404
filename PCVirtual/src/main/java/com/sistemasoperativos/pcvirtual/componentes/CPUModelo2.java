@@ -66,7 +66,14 @@ public class CPUModelo2 implements CPU{
             throw new Exception("La instrucción " + instruccionBits + " no existe");
         }
         Instruccion instruccion = Instrucciones.get(instruccionBits.substring(0, 5));
-        boolean resultado = instruccion.EjecutarInstruccion(instruccionBits, Registros);
+        boolean resultado = false;
+        try{
+            resultado = instruccion.EjecutarInstruccion(instruccionBits, Registros);
+        }
+        catch(Exception e){
+            crearRegistrosPorDefecto();
+            throw new Exception(e.getMessage());
+        }
         IrSiguienteInstruccion(resultado);
     }
     
