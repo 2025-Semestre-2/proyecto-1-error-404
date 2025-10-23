@@ -57,10 +57,9 @@ public class CPUModelo2 implements CPU{
     
     @Override
     public void EjecutarInstruccion() throws Exception {
-        String instruccionBits = Registros.get("00010");
+        String instruccionBits = Registros.get("00000");
         if(instruccionBits.equals("0000000000000000")){
-            BUSAsignado.SolicitarNuevoPrograma();
-            instruccionBits = Registros.get("00010");
+            return;
         }
         if(!Instrucciones.containsKey(instruccionBits.substring(0, 5))){
             throw new Exception("La instrucción " + instruccionBits + " no existe");

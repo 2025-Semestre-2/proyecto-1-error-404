@@ -14,7 +14,6 @@ import java.util.Map;
 public interface BUS2 extends BUS {
     public String EscribirAlmacenamiento(List<String> programa) throws Exception; //Se espera la dirección en la que se guardó el programa
     public List<String> LeerAlmacenamiento(String direccion) throws Exception; //Se espera el programa guardado en el almacenamiento.
-    public void SolicitarNuevoPrograma()  throws Exception ;
     public Map<String, String> TraerMemoriaRAM();
     public Map<String, String> TraerAlmacenamiento();
 }

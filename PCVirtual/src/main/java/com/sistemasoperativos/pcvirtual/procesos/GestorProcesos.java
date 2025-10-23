@@ -4,6 +4,10 @@
  */
 package com.sistemasoperativos.pcvirtual.procesos;
 
+import algoritmos.Algoritmo;
+import java.util.List;
+import java.util.Map;
+
 /**
  *
  * @author males
@@ -11,23 +15,18 @@ package com.sistemasoperativos.pcvirtual.procesos;
 
 
 public class GestorProcesos {
-    private final Planificador planificador;
+    private final Algoritmo Planificador;
 
-    public GestorProcesos(Planificador planificador) {
-        this.planificador = planificador;
+    public GestorProcesos(Algoritmo planificador) {
+        this.Planificador = planificador;
+    }
+    
+    public void Ejecutar(){
+        Planificador.Ejecutar();
     }
 
-    // Crear proceso y mandarlo a la cola de listos
-    public void crearProceso() throws Exception {
-        planificador.agregarProceso();
-    }
-
-    public BCP getProcesoActual() {
-        return planificador.ObtenerBCPActual();
-    }
-
-    public Planificador getPlanificador() {
-        return planificador;
+    public List<Map<String, String>> ObtenerBCPs() {
+        return Planificador.ObtenerBCPs();
     }
 }
 

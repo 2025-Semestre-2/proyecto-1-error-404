@@ -4,7 +4,6 @@
  */
 package com.sistemasoperativos.pcvirtual.componentes;
 
-import com.sistemasoperativos.pcvirtual.procesos.Planificador;
 import java.util.List;
 import java.util.Map;
 
@@ -13,12 +12,9 @@ import java.util.Map;
  * @author andre
  */
 public class BUSModelo2 extends BUSModelo1 implements BUS2 {
-    
-    private Planificador PlanificadorAsignado;
     private Almacenamiento AlmacenamientoActual;
     
-    public BUSModelo2(Planificador planificador, Almacenamiento almacenamiento) {
-        PlanificadorAsignado = planificador;
+    public BUSModelo2(Almacenamiento almacenamiento) {
         AlmacenamientoActual = almacenamiento;
     }
 
@@ -30,11 +26,6 @@ public class BUSModelo2 extends BUSModelo1 implements BUS2 {
     @Override
     public List<String> LeerAlmacenamiento(String direccion) throws Exception{
         return AlmacenamientoActual.BuscarPrograma(direccion);
-    }
-
-    @Override
-    public void SolicitarNuevoPrograma() throws Exception {
-        PlanificadorAsignado.obtenerSiguiente();
     }
     
     @Override

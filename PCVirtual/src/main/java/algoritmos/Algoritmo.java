@@ -4,10 +4,14 @@
  */
 package algoritmos;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  *
  * @author andrewdeni
  */
 public interface Algoritmo {
     public void Ejecutar();
+    public List<Map<String, String>> ObtenerBCPs();
 }
