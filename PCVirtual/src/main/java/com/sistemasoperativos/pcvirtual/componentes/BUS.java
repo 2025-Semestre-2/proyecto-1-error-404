@@ -4,6 +4,7 @@
  */
 package com.sistemasoperativos.pcvirtual.componentes;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -14,7 +15,8 @@ import java.util.Map;
 public interface BUS {
     public void EscribirDatoRAM(String direccion, String dato) throws Exception;
     public String LeerDatoRAM(String direccion) throws Exception;
-    public void AsignarRegistrosCPU(Map<String, String> registros) throws Exception;
-    public Map<String, String> ObtenerRegistrosCPU() throws Exception;
+    public List<Map<String, String>> ObtenerRegistrosCPU() throws Exception;
     public void EjecutarInstruccionCPU() throws Exception;
+    public void AsignarRAM(RAM ram);
+    public void AsignarCPU(CPU cpu);
 }

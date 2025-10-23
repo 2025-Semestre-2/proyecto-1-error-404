@@ -17,8 +17,7 @@ public class BUSModelo2 extends BUSModelo1 implements BUS2 {
     private Planificador PlanificadorAsignado;
     private Almacenamiento AlmacenamientoActual;
     
-    public BUSModelo2(RAM ram, CPU cpu, Planificador planificador, Almacenamiento almacenamiento) {
-        super(ram, cpu);
+    public BUSModelo2(Planificador planificador, Almacenamiento almacenamiento) {
         PlanificadorAsignado = planificador;
         AlmacenamientoActual = almacenamiento;
     }

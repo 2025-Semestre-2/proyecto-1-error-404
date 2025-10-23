@@ -4,6 +4,9 @@
  */
 package com.sistemasoperativos.pcvirtual.componentes;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -13,17 +16,10 @@ import java.util.Map;
  */
 public class BUSModelo1 implements BUS {
     protected RAM RAMInstalada;
-    protected CPU CPUInstalado;
+    List<CPU> CPUs;
 
-    /**
-     * Constructor del BUSModelo1.
-     *
-     * @param ram La RAM instalada en la computadora virtual.
-     * @param cpu La CPU instalada en la computadora virtual.
-     */
-    public BUSModelo1(RAM ram, CPU cpu) {
-        this.RAMInstalada = ram;
-        this.CPUInstalado = cpu;
+    public BUSModelo1() {
+        CPUs = new ArrayList<>();
     }
 
     /**
@@ -57,20 +53,6 @@ public class BUSModelo1 implements BUS {
     }
 
     /**
-     * Escribe un dato en la CPU.
-     *
-     * @param informacion La información a escribir en la CPU.
-     * @throws Exception Si la CPU no está disponible o si ocurre un error al escribir el dato.
-     */
-    @Override
-    public void AsignarRegistrosCPU(Map<String, String> registros) throws Exception {
-        if (CPUInstalado == null){
-            throw new Exception("CPU no está disponible");
-        }
-        CPUInstalado.CambiarRegistros(registros);
-    }
-
-    /**
      * Lee un dato de la CPU.
      *
      * @param informacion La información a leer de la CPU.
@@ -78,11 +60,19 @@ public class BUSModelo1 implements BUS {
      * @throws Exception Si la CPU no está disponible o si ocurre un error al leer el dato.
      */
     @Override
-    public Map<String, String> ObtenerRegistrosCPU() throws Exception {
-        if (CPUInstalado == null){
-            throw new Exception("CPU no está disponible");
+    public List<Map<String, String>> ObtenerRegistrosCPU() throws Exception {
+        List<Map<String, String>> registrosCPUs = new ArrayList<>();
+        for(CPU cpu : CPUs){
+            Map<String, String> registros = cpu.ObtenerRegistros();
+            Map<String, String> copia = new LinkedHashMap<>();
+            for(Map.Entry<String, String> registro : registros.entrySet()){
+                String nombre = registro.getKey();
+                String valor = registro.getValue();
+                copia.put(nombre, valor);
+            }
+            registrosCPUs.add(copia);
         }
-        return CPUInstalado.ObtenerRegistros();
+        return registrosCPUs;
     }
 
     /**
@@ -92,8 +82,18 @@ public class BUSModelo1 implements BUS {
      */
     @Override
     public void EjecutarInstruccionCPU() throws Exception{
-        if (CPUInstalado != null) {
-            CPUInstalado.EjecutarInstruccion();
+        for(CPU cpu : CPUs){
+            cpu.EjecutarInstruccion();
         }
+    }
+    
+    @Override
+    public void AsignarRAM(RAM ram){
+        RAMInstalada = ram;
+    }
+    
+    @Override
+    public void AsignarCPU(CPU cpu){
+        CPUs.add(cpu);
     }
 }
