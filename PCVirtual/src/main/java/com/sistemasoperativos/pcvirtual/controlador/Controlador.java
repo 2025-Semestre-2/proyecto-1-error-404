@@ -166,7 +166,6 @@ public class Controlador {
     
     public void EjecutarInstruccion() throws Exception{
         Gestor.Ejecutar();
-        BUSAsignado.EjecutarInstruccionCPU();
     }
     
     public void CargarPrograma(File archivo) throws Exception{
