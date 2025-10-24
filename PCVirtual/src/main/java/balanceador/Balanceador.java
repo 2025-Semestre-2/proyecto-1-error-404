@@ -12,8 +12,8 @@ import com.sistemasoperativos.pcvirtual.procesos.BCP;
  * @author andrewdeni
  */
 public interface Balanceador {
-    public boolean AsignarProcesoACPU(BCP bcp);
-    public boolean AsignarProcesoACPU(BCP bcp, int CPU);
+    public boolean AsignarProcesoACPU(BCP bcp); //Elige aleatoriamente el CPU a usar
+    public boolean AsignarProcesoACPU(BCP bcp, int CPU); //Asigna al CPU elegido;
     public void AsignarCPU(CPU cpu);
     public boolean EstanCPUsOcupados();
 }

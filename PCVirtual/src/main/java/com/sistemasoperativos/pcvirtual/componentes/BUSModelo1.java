@@ -81,10 +81,23 @@ public class BUSModelo1 implements BUS {
      * @throws Exception Si la CPU no está disponible o si ocurre un error al ejecutar la instrucción.
      */
     @Override
-    public void EjecutarInstruccionCPU() throws Exception{
-        for(CPU cpu : CPUs){
-            cpu.EjecutarInstruccion();
-        }
+    public void EjecutarInstruccionCPU1() throws Exception{
+        CPUs.get(0).EjecutarInstruccion();
+    }
+    
+    @Override
+    public void EjecutarInstruccionCPU2() throws Exception{
+        CPUs.get(1).EjecutarInstruccion();
+    }
+    
+    @Override
+    public void EjecutarInstruccionCPU3() throws Exception{
+        CPUs.get(2).EjecutarInstruccion();
+    }
+    
+    @Override
+    public void EjecutarInstruccionCPU4() throws Exception{
+        CPUs.get(3).EjecutarInstruccion();
     }
     
     @Override
