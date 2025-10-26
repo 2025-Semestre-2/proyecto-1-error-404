@@ -26,13 +26,5 @@ public class BUSPantallaModelo1 implements BUSPantalla{
         dato = Integer.toString(datoEntero);
         ControladorAsignado.Escribir(dato);
     }
-
-    @Override
-    public String Leer() {
-        String dato = ControladorAsignado.Leer();
-        int datoEntero = Integer.parseInt(dato);
-        String datoBits = ConversorAsignado.ConvertirIntegerABits(datoEntero);
-        return datoBits;
-    }
     
 }

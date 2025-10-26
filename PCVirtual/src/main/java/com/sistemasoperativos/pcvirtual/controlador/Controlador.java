@@ -66,7 +66,7 @@ public class Controlador {
         AdministradorProgramas = null;
     }
 
-    public void CrearPC(int tamanoRAM, int tamanoAlmacenamiento) throws Exception{
+    public void CrearPC(int tamanoRAM, int tamanoAlmacenamiento, int tipoCargador, int algoritmo) throws Exception{
         System.out.println("Creando PC...");
         int direccionEscrituraAlmacenamiento = 0;
         Conversor conversor = new Conversor();
@@ -172,8 +172,20 @@ public class Controlador {
         AdministradorProgramas.CargarPrograma(archivo);
     }
     
-    public String Leer(){
-        return PantallaGUI.leer();
+    public Map<String, String> TraerMemoria(){
+        return BUSAsignado.TraerMemoriaRAM();
+    }
+    
+    public Map<String, String> TraerAlmacenamiento(){
+        return BUSAsignado.TraerAlmacenamiento();
+    }
+    
+    public List<Map<String, String>> ObtenerBCPs(){
+        return Gestor.ObtenerBCPs();
+    }
+    
+    public List<Map<String, String>> ObtenerRegistros() throws Exception{
+        return BUSAsignado.ObtenerRegistrosCPU();
     }
     
     public void Escribir(String dato){

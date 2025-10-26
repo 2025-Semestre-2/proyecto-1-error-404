@@ -3,15 +3,11 @@ package com.sistemasoperativos.pcvirtual.gui;
 import com.sistemasoperativos.pcvirtual.controlador.Controlador;
 import com.sistemasoperativos.pcvirtual.procesos.BCP;
 import java.io.File;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
+import java.util.concurrent.*;
 import javafx.application.Application;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.collections.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -23,171 +19,111 @@ import javafx.stage.Stage;
 public class PantallaGUI extends Application {
 
     private final Controlador controlador = new Controlador();
-
-    private static TextArea pantallaSalida;
-    private static TextField pantallaEntrada;
-
     private ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
+    // --- CPU 1–4 ---
+    private TableView<MemoriaFila> tablaRegistrosCPU1;
+    private TableView<MemoriaFila> tablaRegistrosCristianoCPU1;
+    private ListView<String> listaBCP_CPU1;
+    private ListView<String> listaBCP_Cristiano_CPU1;
+
+    private TableView<MemoriaFila> tablaRegistrosCPU2;
+    private TableView<MemoriaFila> tablaRegistrosCristianoCPU2;
+    private ListView<String> listaBCP_CPU2;
+    private ListView<String> listaBCP_Cristiano_CPU2;
+
+    private TableView<MemoriaFila> tablaRegistrosCPU3;
+    private TableView<MemoriaFila> tablaRegistrosCristianoCPU3;
+    private ListView<String> listaBCP_CPU3;
+    private ListView<String> listaBCP_Cristiano_CPU3;
+
+    private TableView<MemoriaFila> tablaRegistrosCPU4;
+    private TableView<MemoriaFila> tablaRegistrosCristianoCPU4;
+    private ListView<String> listaBCP_CPU4;
+    private ListView<String> listaBCP_Cristiano_CPU4;
+
+    // --- Memoria y Almacenamiento compartidos ---
     private TableView<MemoriaFila> tablaMemoria;
-    private TableView<MemoriaFila> tablaDisco;
-    private TableView<MemoriaFila> tablaRegistros;
-    private ListView<String> listaBPC;
-    
-    private TableView<MemoriaFila> tablaRegistrosCristiano;
-    private ListView<String>  listaBCPCristiano;
     private TableView<MemoriaFila> tablaMemoriaCristiano;
+    private TableView<MemoriaFila> tablaDisco;
     private TableView<MemoriaFila> tablaDiscoCristiano;
+
+    private static TextArea pantallaSalida;
 
     @Override
     public void start(Stage primaryStage) {
-        primaryStage.setTitle("Proyecto 1 de SO");
+        primaryStage.setTitle("PC Virtual - 4 CPUs con memoria y almacenamiento compartidos");
 
-        // ------------------- Barra superior -------------------
-        HBox barraAcciones = new HBox(15);
-        barraAcciones.setPadding(new Insets(10));
-        barraAcciones.setAlignment(Pos.CENTER);
-
-        Button btnCrearPC      = new Button("Crear PC");
-        Button btnEjecutar     = new Button("Ejecutar Automáticamente");
-        Button btnPaso         = new Button("Paso a paso");
-        Button btnLimpiar      = new Button("Limpiar");
+        // ---------------- Barra superior ----------------
+        Button btnCrearPC = new Button("Crear PC");
+        Button btnCargar = new Button("Cargar archivo");
+        Button btnEjecutar = new Button("Ejecutar automáticamente");
         Button btnEstadisticas = new Button("Estadísticas");
 
-        barraAcciones.getChildren().addAll(btnCrearPC, btnEjecutar, btnPaso, btnLimpiar, btnEstadisticas);
+        HBox barra = new HBox(15, btnCrearPC, btnCargar, btnEjecutar, btnEstadisticas);
+        barra.setAlignment(Pos.CENTER);
+        barra.setPadding(new Insets(10));
 
-        // ------------------- Panel izquierdo: Procesos / Registros -------------------
-        VBox panelIzq = new VBox(10);
-        panelIzq.setPadding(new Insets(10));
-        panelIzq.setPrefWidth(200);
+        // ---------------- CPUs ----------------
+        TabPane tabCPUs = new TabPane();
+        tabCPUs.getTabs().add(crearTabCPU("CPU 1"));
+        tabCPUs.getTabs().add(crearTabCPU("CPU 2"));
+        tabCPUs.getTabs().add(crearTabCPU("CPU 3"));
+        tabCPUs.getTabs().add(crearTabCPU("CPU 4"));
 
-        Button btnCargar = new Button("Cargar archivo");
-
-        // Tabla de registros normal
-        tablaRegistros = new TableView<>();
-        tablaRegistros.setPlaceholder(new Label("Registros CPU"));
-
-        TableColumn<MemoriaFila, String> colRegNombre = new TableColumn<>("Registro");
-        colRegNombre.setCellValueFactory(data -> data.getValue().llaveProperty());
-
-        TableColumn<MemoriaFila, String> colRegValor = new TableColumn<>("Valor");
-        colRegValor.setCellValueFactory(data -> data.getValue().valorProperty());
-
-        tablaRegistros.getColumns().addAll(colRegNombre, colRegValor);
-        VBox.setVgrow(tablaRegistros, Priority.ALWAYS);
-
-        // Tabla de registros Cristiano
-        Label lblRegCristiano = new Label("Registros Cristiano");
-        tablaRegistrosCristiano = new TableView<>();
-        tablaRegistrosCristiano.setPlaceholder(new Label("Registros CPU Cristiano"));
-
-        TableColumn<MemoriaFila, String> colRegCristianoNombre = new TableColumn<>("Registro");
-        colRegCristianoNombre.setCellValueFactory(data -> data.getValue().llaveProperty());
-
-        TableColumn<MemoriaFila, String> colRegCristianoValor = new TableColumn<>("Valor");
-        colRegCristianoValor.setCellValueFactory(data -> data.getValue().valorProperty());
-
-        tablaRegistrosCristiano.getColumns().addAll(colRegCristianoNombre, colRegCristianoValor);
-
-        panelIzq.getChildren().addAll(btnCargar, tablaRegistros, lblRegCristiano, tablaRegistrosCristiano);
-
-        // ------------------- Panel central: BCP -------------------
-        VBox panelBPC = new VBox(10);
-        panelBPC.setPadding(new Insets(10));
-        panelBPC.setPrefWidth(250);
-
-        Label lblBPC = new Label("BCP actual CPU1");
-        listaBPC = new ListView<>();
-        listaBPC.setPrefHeight(200);
-        listaBPC.setPlaceholder(new Label("Sin BCP activo"));
-
-        Label lblBCPCristiano = new Label("BCP Cristiano");
-        listaBCPCristiano = new ListView<>();
-        listaBCPCristiano.setPrefHeight(200);
-        listaBCPCristiano.setPlaceholder(new Label("Sin BCP Cristiano activo"));
-
-        panelBPC.getChildren().addAll(lblBPC, listaBPC, lblBCPCristiano, listaBCPCristiano);
-
-        // ------------------- Panel derecho: Memoria y Disco -------------------
-        VBox panelMemoria = new VBox(5);
+        // ---------------- Memoria y Disco compartidos ----------------
+        VBox panelMemoria = new VBox(8);
         panelMemoria.setPadding(new Insets(10));
-        Label lblMemoria = new Label("Memoria");
-        tablaMemoria = crearTablaMemoriaDisco();
 
+        Label lblMemoria = new Label("Memoria (RAM compartida)");
+        tablaMemoria = crearTablaMemoriaDisco();
         Label lblMemoriaCristiano = new Label("Memoria Cristiano");
         tablaMemoriaCristiano = crearTablaMemoriaDisco();
 
-        panelMemoria.getChildren().addAll(lblMemoria, tablaMemoria, lblMemoriaCristiano, tablaMemoriaCristiano);
-
-        VBox panelDisco = new VBox(5);
-        panelDisco.setPadding(new Insets(10));
-        Label lblDisco = new Label("Disco");
+        Label lblDisco = new Label("Almacenamiento (Disco compartido)");
         tablaDisco = crearTablaMemoriaDisco();
-
-        Label lblDiscoCristiano = new Label("Disco Cristiano");
+        Label lblDiscoCristiano = new Label("Almacenamiento Cristiano");
         tablaDiscoCristiano = crearTablaMemoriaDisco();
 
-        panelDisco.getChildren().addAll(lblDisco, tablaDisco, lblDiscoCristiano, tablaDiscoCristiano);
-
-        HBox panelTablas = new HBox(20, panelMemoria, panelDisco);
-
-        // ------------------- Panel inferior: Pantalla -------------------
-        Label lblPantalla = new Label("Pantalla");
-        pantallaEntrada = new TextField();
-        pantallaEntrada.setPromptText(">> Ingresar valor:");
+        panelMemoria.getChildren().addAll(
+            lblMemoria, tablaMemoria,
+            lblMemoriaCristiano, tablaMemoriaCristiano,
+            lblDisco, tablaDisco,
+            lblDiscoCristiano, tablaDiscoCristiano
+        );
+        
+        // ---------------- Pantalla de salida ----------------
         pantallaSalida = new TextArea();
         pantallaSalida.setEditable(false);
+        pantallaSalida.setPrefHeight(120);
+        VBox panelSalida = new VBox(5, new Label("Pantalla"), pantallaSalida);
+        panelSalida.setPadding(new Insets(10));
 
-        VBox panelPantalla = new VBox(5, lblPantalla, pantallaEntrada, pantallaSalida);
-        panelPantalla.setPadding(new Insets(10));
-        panelPantalla.setStyle("-fx-border-color: black; -fx-border-width: 1;");
-        panelPantalla.setPrefHeight(150);
-
-        // ------------------- Layout principal -------------------
+        // ---------------- Layout principal ----------------
         BorderPane root = new BorderPane();
-        root.setTop(barraAcciones);
-        root.setLeft(panelIzq);
-        root.setCenter(panelBPC);
-        root.setRight(panelTablas);
-        root.setBottom(panelPantalla);
+        root.setTop(barra);
+        root.setCenter(tabCPUs);
+        root.setRight(panelMemoria);
+        root.setBottom(panelSalida);
 
-        Scene scene = new Scene(root, 1100, 650);
+        Scene scene = new Scene(root, 1300, 750);
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        // ------------------- Acciones -------------------
-
-        btnCrearPC.setOnAction(e -> {
-            CrearPCDialog dlg = new CrearPCDialog(controlador, primaryStage);
-            Optional<ConfigPC> res = dlg.showAndWait();
-            res.ifPresent(cfg -> {
-                if(cfg.getRamMB() > 0 && cfg.getAlmacenamientoMB() > 0) {
-                    try {
-                        controlador.CrearPC(cfg.getRamMB(), cfg.getAlmacenamientoMB());
-                        System.out.println("PC creada → RAM: " + cfg.getRamMB() + " MB, Almacenamiento: " + cfg.getAlmacenamientoMB() + " MB");
-                        actualizarTablas();
-                    } catch (Exception ex) {
-                        System.out.println("Error al crear el PC: " + ex.getMessage());
-                    }
-                } else {
-                    System.out.println("Error: valores inválidos para la PC");
+        // ---------------- Acciones ----------------
+        btnCargar.setOnAction(e -> {
+            FileChooser fc = new FileChooser();
+            fc.setTitle("Seleccionar programa");
+            File archivo = fc.showOpenDialog(primaryStage);
+            if (archivo != null) {
+                try {
+                    controlador.CargarPrograma(archivo);
+                    escribir("Programa cargado: " + archivo.getName());
+                    actualizarMemoria();
+                    actualizarDisco();
+                } catch (Exception ex) {
+                    escribir("Error al cargar: " + ex.getMessage());
                 }
-            });
-        });
-
-        btnLimpiar.setOnAction(e -> {
-            pantallaSalida.clear();
-            limpiarTablas();
-        });
-
-        btnPaso.setOnAction(e -> {
-            try {
-                scheduler.shutdownNow();
-                controlador.EjecutarInstruccion();
-                actualizarTablas();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                System.out.println("Error al ejecutar instrucciones: " + ex.getMessage());
             }
         });
 
@@ -195,207 +131,228 @@ public class PantallaGUI extends Application {
             Runnable tarea = () -> {
                 try {
                     controlador.EjecutarInstruccion();
-                    actualizarTablas();
+                    actualizarTodo();
                 } catch (Exception ex) {
-                    System.out.println("Error: " + ex.getMessage());
+                    escribir("Error al ejecutar: " + ex.getMessage());
                 }
             };
             scheduler.scheduleAtFixedRate(tarea, 0, 1, TimeUnit.SECONDS);
         });
 
-        btnCargar.setOnAction(e -> {
-            FileChooser fc = new FileChooser();
-            fc.setTitle("Seleccionar archivo de programa");
-            File archivo = fc.showOpenDialog(primaryStage);
-            if(archivo != null){
-                try{
-                    controlador.CargarPrograma(archivo);
-                    System.out.println("Programa cargado: " + archivo.getName());
-                    actualizarDisco();
-                }catch(Exception ex){
-                    System.out.println("Error al cargar programa: " + ex.getMessage());
-                }
-            }
+        btnEstadisticas.setOnAction(e -> {
+            escribir("Estadísticas: (en desarrollo)");
+        });
+        
+        btnCrearPC.setOnAction(e -> {
+            CrearPCDialog dlg = new CrearPCDialog(controlador, primaryStage);
+            dlg.showAndWait();
         });
     }
 
-    // ------------------- Crear tabla de memoria/disco -------------------
-    private TableView<MemoriaFila> crearTablaMemoriaDisco(){
+    // ---------------- Crear pestañas por CPU ----------------
+    private Tab crearTabCPU(String nombre) {
+        VBox panel = new VBox(10);
+        panel.setPadding(new Insets(10));
+
+        TableView<MemoriaFila> tablaReg = crearTablaMemoriaDisco();
+        TableView<MemoriaFila> tablaRegC = crearTablaMemoriaDisco();
+        ListView<String> listaBCP = new ListView<>();
+        ListView<String> listaBCPC = new ListView<>();
+
+        listaBCP.setPlaceholder(new Label("Sin BCP activo"));
+        listaBCPC.setPlaceholder(new Label("Sin BCP Cristiano activo"));
+
+        panel.getChildren().addAll(
+            new Label("BCP"), listaBCP,
+            new Label("BCP Cristiano"), listaBCPC,
+            new Label("Registros"), tablaReg,
+            new Label("Registros Cristiano"), tablaRegC
+        );
+        ScrollPane scroll = new ScrollPane(panel);
+        scroll.setFitToWidth(true);
+        Tab tab = new Tab(nombre, scroll);
+        tab.setClosable(false);
+        switch (nombre) {
+            case "CPU 1":
+                tablaRegistrosCPU1 = tablaReg;
+                tablaRegistrosCristianoCPU1 = tablaRegC;
+                listaBCP_CPU1 = listaBCP;
+                listaBCP_Cristiano_CPU1 = listaBCPC;
+                break;
+
+            case "CPU 2":
+                tablaRegistrosCPU2 = tablaReg;
+                tablaRegistrosCristianoCPU2 = tablaRegC;
+                listaBCP_CPU2 = listaBCP;
+                listaBCP_Cristiano_CPU2 = listaBCPC;
+                break;
+
+            case "CPU 3":
+                tablaRegistrosCPU3 = tablaReg;
+                tablaRegistrosCristianoCPU3 = tablaRegC;
+                listaBCP_CPU3 = listaBCP;
+                listaBCP_Cristiano_CPU3 = listaBCPC;
+                break;
+
+            case "CPU 4":
+                tablaRegistrosCPU4 = tablaReg;
+                tablaRegistrosCristianoCPU4 = tablaRegC;
+                listaBCP_CPU4 = listaBCP;
+                listaBCP_Cristiano_CPU4 = listaBCPC;
+                break;
+
+            default:
+                break;
+        }
+        return tab;
+    }
+
+    // ---------------- Crear tabla genérica ----------------
+    private TableView<MemoriaFila> crearTablaMemoriaDisco() {
         TableView<MemoriaFila> tabla = new TableView<>();
-        tabla.setPlaceholder(new Label("Sin datos"));
-
         TableColumn<MemoriaFila, String> colLlave = new TableColumn<>("Dirección");
-        colLlave.setCellValueFactory(data -> data.getValue().llaveProperty());
-
         TableColumn<MemoriaFila, String> colValor = new TableColumn<>("Valor");
+        colLlave.setCellValueFactory(data -> data.getValue().llaveProperty());
         colValor.setCellValueFactory(data -> data.getValue().valorProperty());
-
         tabla.getColumns().addAll(colLlave, colValor);
+        tabla.setPrefHeight(150);
+        tabla.setSortPolicy(t -> null);
         return tabla;
     }
 
-    // ------------------- Actualizar todas las tablas -------------------
-    private void actualizarTablas(){
+    // ---------------- Actualización de interfaz ----------------
+    private void actualizarTodo() {
         actualizarMemoria();
         actualizarDisco();
-        actualizarRegistros();
-        ActualizarBCP();
+        actualizarCPUs();
     }
 
-    private void actualizarMemoria(){
-        Map<String, String> memoria = controlador.TraerMemoriaActual();
+    private void actualizarCPUs() {
+        try {
+            List<Map<String, String>> listaRegistros = controlador.ObtenerRegistros();
+            List<Map<String, String>> listaBCPs = controlador.ObtenerBCPs();
+
+            for (int i = 0; i < 4; i++) {
+                Map<String, String> regs = listaRegistros.get(i);
+                Map<String, String> bcp = listaBCPs.get(i);
+
+                TableView<MemoriaFila> tablaReg;
+                TableView<MemoriaFila> tablaRegC;
+
+                switch (i) {
+                    case 0:
+                        tablaReg = tablaRegistrosCPU1;
+                        tablaRegC = tablaRegistrosCristianoCPU1;
+                        break;
+                    case 1:
+                        tablaReg = tablaRegistrosCPU2;
+                        tablaRegC = tablaRegistrosCristianoCPU2;
+                        break;
+                    case 2:
+                        tablaReg = tablaRegistrosCPU3;
+                        tablaRegC = tablaRegistrosCristianoCPU3;
+                        break;
+                    default:
+                        tablaReg = tablaRegistrosCPU4;
+                        tablaRegC = tablaRegistrosCristianoCPU4;
+                        break;
+                }
+
+                ObservableList<MemoriaFila> datos = FXCollections.observableArrayList();
+                regs.forEach((k, v) -> datos.add(new MemoriaFila(k, v)));
+                tablaReg.setItems(datos);
+
+                Map<String, String> regsC = ConversorRegistros.ConvertirACristiano(regs);
+                ObservableList<MemoriaFila> datosC = FXCollections.observableArrayList();
+                regsC.forEach((k, v) -> datosC.add(new MemoriaFila(k, v)));
+                tablaRegC.setItems(datosC);
+
+                ListView<String> listaBCP;
+                ListView<String> listaBCPC;
+
+                switch (i) {
+                    case 0:
+                        listaBCP = listaBCP_CPU1;
+                        listaBCPC = listaBCP_Cristiano_CPU1;
+                        break;
+                    case 1:
+                        listaBCP = listaBCP_CPU2;
+                        listaBCPC = listaBCP_Cristiano_CPU2;
+                        break;
+                    case 2:
+                        listaBCP = listaBCP_CPU3;
+                        listaBCPC = listaBCP_Cristiano_CPU3;
+                        break;
+                    default:
+                        listaBCP = listaBCP_CPU4;
+                        listaBCPC = listaBCP_Cristiano_CPU4;
+                        break;
+                }
+
+                listaBCP.getItems().clear();
+                listaBCPC.getItems().clear();
+
+                if (bcp == null || bcp.isEmpty()) {
+                    listaBCP.getItems().add("No hay BCP activo");
+                    continue;
+                }
+
+                ObservableList<String> datosBCP = FXCollections.observableArrayList();
+                bcp.forEach((k, v) -> datosBCP.add(k + ": " + v));
+                listaBCP.setItems(datosBCP);
+
+                Map<String, String> bcpC = ConversorRegistros.ConvertirACristiano(bcp);
+                ObservableList<String> datosBCPC = FXCollections.observableArrayList();
+                bcpC.forEach((k, v) -> datosBCPC.add(k + ": " + v));
+                listaBCPC.setItems(datosBCPC);
+            }
+
+        } catch (Exception ex) {
+            escribir("Error al actualizar CPUs: " + ex.getMessage());
+        }
+    }
+
+    private void actualizarMemoria() {
+        Map<String, String> memoria = controlador.TraerMemoria();
         ObservableList<MemoriaFila> datos = FXCollections.observableArrayList();
-        memoria.forEach((k,v) -> datos.add(new MemoriaFila(k,v)));
+        memoria.forEach((k, v) -> datos.add(new MemoriaFila(k, v)));
         tablaMemoria.setItems(datos);
-        actualizarMemoriaCristiana(memoria);
-    }
-    
-    private void actualizarMemoriaCristiana(Map<String, String> memoria){
-        Map<String, String> memoriaCristiana = ConversorMemoria.ConvertirACristiano(memoria);
-        ObservableList<MemoriaFila> datos = FXCollections.observableArrayList();
-        memoriaCristiana.forEach((k,v) -> datos.add(new MemoriaFila(k,v)));
-        tablaMemoriaCristiano.setItems(datos);
+
+        Map<String, String> memC = ConversorMemoria.ConvertirACristiano(memoria);
+        ObservableList<MemoriaFila> datosC = FXCollections.observableArrayList();
+        memC.forEach((k, v) -> datosC.add(new MemoriaFila(k, v)));
+        tablaMemoriaCristiano.setItems(datosC);
     }
 
-    private void actualizarDisco(){
+    private void actualizarDisco() {
         Map<String, String> disco = controlador.TraerAlmacenamiento();
         ObservableList<MemoriaFila> datos = FXCollections.observableArrayList();
-        disco.forEach((k,v) -> datos.add(new MemoriaFila(k,v)));
+        disco.forEach((k, v) -> datos.add(new MemoriaFila(k, v)));
         tablaDisco.setItems(datos);
-        actualizarDiscoCristiano(disco);
-    }
-    
-    private void actualizarDiscoCristiano(Map<String, String> memoria){
-        Map<String, String> discoCristiano = ConversorMemoria.ConvertirACristiano(memoria);
-        ObservableList<MemoriaFila> datos = FXCollections.observableArrayList();
-        discoCristiano.forEach((k,v) -> datos.add(new MemoriaFila(k,v)));
-        tablaDiscoCristiano.setItems(datos);
+
+        Map<String, String> discoC = ConversorMemoria.ConvertirACristiano(disco);
+        ObservableList<MemoriaFila> datosC = FXCollections.observableArrayList();
+        discoC.forEach((k, v) -> datosC.add(new MemoriaFila(k, v)));
+        tablaDiscoCristiano.setItems(datosC);
     }
 
-    private void actualizarRegistros(){
-        try{
-            Map<String,String> registros = controlador.TraerRegistros();
-            ObservableList<MemoriaFila> datos = FXCollections.observableArrayList();
-            registros.forEach((k,v) -> datos.add(new MemoriaFila(k,v)));
-            tablaRegistros.setItems(datos);
-            actualizarRegistrosCristiano(registros);
-        }catch(Exception ex){
-            System.out.println("Error al traer registros: " + ex.getMessage());
-        }
-    }
-    
-    private void actualizarRegistrosCristiano(Map<String, String> registros){
-        Map<String, String> registrosCristianos = ConversorRegistros.ConvertirACristiano(registros);
-        System.out.println(registrosCristianos.toString());
-        ObservableList<MemoriaFila> datos = FXCollections.observableArrayList();
-        registrosCristianos.forEach((k,v) -> datos.add(new MemoriaFila(k,v)));
-        tablaRegistrosCristiano.setItems(datos);
-    }
-
-    // ------------------- Actualizar BCP actual -------------------
-    private void ActualizarBCP(){
-        BCP bcp = controlador.TraerBCPActual();
-        if(bcp == null){
-            listaBPC.getItems().clear();
-            listaBPC.getItems().add("No hay BCP activo");
-            return;
-        }
-
-        ObservableList<String> datos = FXCollections.observableArrayList();
-        datos.add("ID: " + bcp.getID());
-        datos.add("Nombre: " + bcp.getNombre());
-        datos.add("Estado: " + bcp.getEstado());
-        datos.add("CPU asignado: " + bcp.getCpuAsignado());
-        datos.add("Tiempo ejecutado: " + bcp.getTiempoEjecutado() + " ms");
-
-        Map<String, String> regs = bcp.getRegistros();
-        String[] ordenRegistros = { "00000", "00001", "00010", "00011", "00100", "00101", "00110", "00111", "01000" };
-        Map<String, String> nombreRegistro = Map.of(
-            "00000", "PC",
-            "00001", "AC",
-            "00010", "IR",
-            "00011", "AX",
-            "00100", "BX",
-            "00101", "CX",
-            "00110", "DX",
-            "00111", "CP",
-            "01000", "SP"
-        );
-
-        datos.add("Registros:");
-        for(String codigo : ordenRegistros){
-            String valor = regs.get(codigo);
-            String nombre = nombreRegistro.get(codigo);
-            datos.add("  " + nombre + " = " + valor);
-        }
-
-
-        listaBPC.setItems(datos);
-        actualizarBCPCristiano(bcp);
-    }
-    
-    private void actualizarBCPCristiano(BCP bcp){
-        ObservableList<String> datos = FXCollections.observableArrayList();
-        datos.add("ID: " + bcp.getID());
-        datos.add("Nombre: " + bcp.getNombre());
-        datos.add("Estado: " + bcp.getEstado());
-        datos.add("CPU asignado: " + bcp.getCpuAsignado());
-        datos.add("Tiempo ejecutado: " + bcp.getTiempoEjecutado() + " ms");
-        Map<String, String> registros = bcp.getRegistros();
-        Map<String, String> registrosCristianos = ConversorRegistros.ConvertirACristiano(registros);
-        datos.add("Registros:");
-        for(Map.Entry<String, String> registro : registrosCristianos.entrySet()){
-            String nombre = registro.getKey();
-            String valor = registro.getValue();
-            datos.add("  " + nombre + " = " + valor);
-        }
-        listaBCPCristiano.setItems(datos);
-    }
-
-    // ------------------- Limpiar tablas -------------------
-    private void limpiarTablas(){
-        tablaMemoria.getItems().clear();
-        tablaDisco.getItems().clear();
-        tablaRegistros.getItems().clear();
-        listaBPC.getItems().clear();
-        tablaRegistrosCristiano.getItems().clear();
-        listaBCPCristiano.getItems().clear();
-        tablaMemoriaCristiano.getItems().clear();
-        tablaDiscoCristiano.getItems().clear();
-    }
-
-    // ------------------- Clase para filas -------------------
-    public static class MemoriaFila{
-        private final SimpleStringProperty llave;
-        private final SimpleStringProperty valor;
-
-        public MemoriaFila(String llave, String valor){
-            this.llave = new SimpleStringProperty(llave);
-            this.valor = new SimpleStringProperty(valor);
-        }
-
-        public String getLlave(){ return llave.get(); }
-        public String getValor(){ return valor.get(); }
-
-        public void setLlave(String llave){ this.llave.set(llave); }
-        public void setValor(String valor){ this.valor.set(valor); }
-
-        public SimpleStringProperty llaveProperty(){ return llave; }
-        public SimpleStringProperty valorProperty(){ return valor; }
-    }
-
-    // ------------------- Métodos de pantalla -------------------
-    public static void escribir(String texto){
+    // ---------------- Utilidades ----------------
+    public static void escribir(String texto) {
         pantallaSalida.appendText(texto + "\n");
     }
 
-    public static String leer(){
-        String texto = pantallaEntrada.getText();
-        pantallaEntrada.clear();
-        return texto;
+    public static class MemoriaFila {
+        private final SimpleStringProperty llave;
+        private final SimpleStringProperty valor;
+        public MemoriaFila(String llave, String valor) {
+            this.llave = new SimpleStringProperty(llave);
+            this.valor = new SimpleStringProperty(valor);
+        }
+        public SimpleStringProperty llaveProperty() { return llave; }
+        public SimpleStringProperty valorProperty() { return valor; }
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         launch(args);
     }
 }

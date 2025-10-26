@@ -10,5 +10,4 @@ package com.sistemasoperativos.pcvirtual.componentes;
  */
 public interface BUSPantalla {
     public void Escribir(String dato);
-    public String Leer();
 }
