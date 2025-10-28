@@ -101,7 +101,7 @@ public class HRRN extends Thread {
         if (proceso == null) return;
 
         proceso.marcarEjecucion();
-        System.out.println("→ Ejecutando " + proceso.getNombre());
+        System.out.println(" Ejecutando " + proceso.getNombre());
 
         long ciclos = proceso.getTiempoTotalEjecucion();
         for (long i = proceso.getTiempoEjecutado(); i < ciclos; i++) {
@@ -120,7 +120,7 @@ public class HRRN extends Thread {
         }
 
         proceso.marcarFinalizado();
-        System.out.println("✔ Proceso " + proceso.getNombre() + " completado.");
+        System.out.println(" Proceso " + proceso.getNombre() + " completado.");
     }
 
     public void DetenerEjecucion() {
