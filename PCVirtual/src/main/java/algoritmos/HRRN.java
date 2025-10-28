@@ -10,11 +10,11 @@
 
 package algoritmos;
 
+import com.sistemasoperativos.pcvirtual.componentes.BUSModelo2;
 import com.sistemasoperativos.pcvirtual.procesos.BCP;
 import com.sistemasoperativos.pcvirtual.procesos.ColaProcesos;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import com.sistemasoperativos.pcvirtual.procesos.EstadoBCP;
+
 import java.util.Queue;
 
 /**
@@ -27,76 +27,103 @@ import java.util.Queue;
  * - T_espera se calcula y actualiza localmente en este planificador
  * - tiempoCPU representa el uptime del planificador
  * 
- * @author (tu nombre)
+ * @author males
  */
-public class HRRN {
+
+
+public class HRRN extends Thread {
 
     private final ColaProcesos cola;
-    private final Map<Integer, Integer> tiemposEspera; // tiempo de espera por ID de proceso
-    private int tiempoCPU; // uptime del CPU simulado
+    private final BUSModelo2 bus;
+    private boolean enEjecucion = false;
 
-    public HRRN(ColaProcesos cola) {
+    public HRRN(ColaProcesos cola, BUSModelo2 bus) {
         this.cola = cola;
-        this.tiemposEspera = new HashMap<>();
-        this.tiempoCPU = 0;
+        this.bus = bus;
     }
 
-    /**
-     * Selecciona el proceso con el mayor HRR.
-     * Si la cola está vacía, devuelve null.
-     */
-    public BCP seleccionarMayorHRR() {
-        if (cola.estaVacia()) {
-            System.out.println("[HRRN] No hay procesos en la cola.");
-            return null;
+    public void IniciarEjecucion() {
+        if (!enEjecucion) {
+            enEjecucion = true;
+            this.start();
+        }
+    }
+
+    @Override
+    public void run() {
+        System.out.println("Planificador HRRN iniciado...");
+
+        while (enEjecucion) {
+            Queue<BCP> lista = cola.getProcesos();
+
+            if (lista.isEmpty()) {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+                continue;
+            }
+
+            BCP proceso = seleccionarProcesoHRRN(lista);
+            if (proceso == null) continue;
+
+            ejecutarProceso(proceso);
         }
 
-        Queue<BCP> lista = new LinkedList<>(cola.getProcesosOrdenadorPorMemoria());
-        if (lista.isEmpty()) return null;
+        System.out.println("Planificador HRRN finalizado.");
+    }
 
-        double maxHRR = -1.0;
+    // Selecciona el proceso con mayor Response Ratio = (espera + servicio) / servicio
+    private BCP seleccionarProcesoHRRN(Queue<BCP> lista) {
+        double mayorRatio = -1;
         BCP seleccionado = null;
 
+        long tiempoActual = System.currentTimeMillis();
+
         for (BCP p : lista) {
-            int espera = tiemposEspera.getOrDefault(p.getID(), 0);
-            long servicio = p.getTiempoTotalEjecucion(); // definido en BCP
+            if (p.getEstado() == EstadoBCP.FINALIZADO) continue;
 
-            if (servicio <= 0) servicio = 1; // evitar división por cero
+            long tiempoEspera = tiempoActual - p.getTiempoInicio();
+            long servicio = Math.max(1, p.getTiempoTotalEjecucion()); // evita división por 0
+            double ratio = ((double) (tiempoEspera + servicio)) / servicio;
 
-            double hrr = (double) (espera + servicio) / servicio;
-
-            if (hrr > maxHRR) {
-                maxHRR = hrr;
+            if (ratio > mayorRatio) {
+                mayorRatio = ratio;
                 seleccionado = p;
             }
-        }
-
-        if (seleccionado != null) {
-            lista.remove(seleccionado);
-            tiemposEspera.remove(seleccionado.getID());
-            tiempoCPU += seleccionado.getTiempoTotalEjecucion();
-
-            System.out.printf("[HRRN] Proceso seleccionado: %s (ID=%d) | HRR=%.2f | Tiempo CPU total=%d\n",
-                    seleccionado.getNombre(), seleccionado.getID(), maxHRR, tiempoCPU);
         }
 
         return seleccionado;
     }
 
-    /**
-     * Incrementa el tiempo de espera de todos los procesos restantes.
-     */
-    public void actualizarTiemposEspera() {
-        for (BCP p : cola.getProcesosOrdenadorPorMemoria()) {
-            int actual = tiemposEspera.getOrDefault(p.getID(), 0);
-            tiemposEspera.put(p.getID(), actual + 1);
+    private void ejecutarProceso(BCP proceso) {
+        if (proceso == null) return;
+
+        proceso.marcarEjecucion();
+        System.out.println("→ Ejecutando " + proceso.getNombre());
+
+        long ciclos = proceso.getTiempoTotalEjecucion();
+        for (long i = proceso.getTiempoEjecutado(); i < ciclos; i++) {
+            try {
+                bus.EscribirDatoRAM("00000", proceso.getNombre() + " ejecutando ciclo " + (i + 1));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
         }
+
+        proceso.marcarFinalizado();
+        System.out.println("✔ Proceso " + proceso.getNombre() + " completado.");
     }
 
-    /**
-     * Retorna el tiempo total del CPU (uptime del simulador).
-     */
-    public int getTiempoCPU() {
-        return tiempoCPU;
+    public void DetenerEjecucion() {
+        enEjecucion = false;
     }
 }
