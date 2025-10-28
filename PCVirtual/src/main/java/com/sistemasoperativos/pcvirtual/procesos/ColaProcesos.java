@@ -126,5 +126,14 @@ public class ColaProcesos {
         }
         return colaOrdenada;
     }
+
+    public void remover(BCP proceso) {
+        cola.remove(proceso);
+    }
+
+    public Queue<BCP> getProcesos() {
+        return cola;
+    }
+
 }
 

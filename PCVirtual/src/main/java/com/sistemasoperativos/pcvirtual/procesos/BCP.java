@@ -11,6 +11,7 @@ public class BCP {
     private final String nombre;
     private final int prioridad;
     private EstadoBCP estado;
+    private long tiempoTotalEjecucion; // tiempo total requerido de CPU 
 
     // -------- Registros --------
     private final Map<String, String> registros; // PC, AC, IR, AX, BX, CX, DX, SP, CP, BS, LI
@@ -256,6 +257,16 @@ public class BCP {
     public void setEstado(EstadoBCP estado) {
         this.estado = estado;
     }
+
+    public long getTiempoTotalEjecucion() {
+        return tiempoTotalEjecucion;
+    }
+
+    public void setTiempoTotalEjecucion(long tiempoTotalEjecucion) {
+        this.tiempoTotalEjecucion = tiempoTotalEjecucion;
+    }
+
+
 
     @Override
     public String toString() {
