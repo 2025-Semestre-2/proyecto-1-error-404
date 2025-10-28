@@ -11,7 +11,6 @@ public class BCP {
     private final String nombre;
     private final int prioridad;
     private EstadoBCP estado;
-    private long tiempoTotalEjecucion; // tiempo total requerido de CPU 
 
     // -------- Registros --------
     private final Map<String, String> registros; // PC, AC, IR, AX, BX, CX, DX, SP, CP, BS, LI
@@ -20,6 +19,8 @@ public class BCP {
     private String cpuAsignado;
     private long tiempoInicio;
     private long tiempoEjecutado;
+    private long tiempoRestante;
+    private long tiempoTotalEjecucion; 
 
     // -------- Información de E/S --------
     private final List<String> archivosAbiertos;
@@ -264,6 +265,15 @@ public class BCP {
 
     public void setTiempoTotalEjecucion(long tiempoTotalEjecucion) {
         this.tiempoTotalEjecucion = tiempoTotalEjecucion;
+        this.tiempoRestante = tiempoTotalEjecucion; // inicializar
+    }
+
+    public long getTiempoRestante() {
+        return tiempoRestante;
+    }
+
+    public void setTiempoRestante(long tiempoRestante) {
+        this.tiempoRestante = tiempoRestante;
     }
 
 

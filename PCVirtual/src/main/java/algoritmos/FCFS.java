@@ -17,6 +17,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ *
+ * @author males
+ */
+
+/**
  * Algoritmo FCFS (First Come, First Served)
  * Los procesos se ejecutan en orden de llegada (FIFO) sin expulsión.
  * Cada CPU corre en su propio hilo utilizando BUS2.
