@@ -1,6 +1,5 @@
 package com.sistemasoperativos.pcvirtual.controlador;
 
-import algoritmos.Algoritmo;
 import com.sistemasoperativos.pcvirtual.compilador.AdmnistradorProgramasNuevos;
 import com.sistemasoperativos.pcvirtual.componentes.Almacenamiento;
 import com.sistemasoperativos.pcvirtual.componentes.AlmacenamientoModelo1;
@@ -33,6 +32,15 @@ import com.sistemasoperativos.pcvirtual.instrucciones.CMP;
 import com.sistemasoperativos.pcvirtual.instrucciones.Param;
 import com.sistemasoperativos.pcvirtual.procesos.BCP;
 import com.sistemasoperativos.pcvirtual.procesos.GestorProcesos;
+import com.sistemasoperativos.pcvirtual.procesos.ColaProcesos;
+import algoritmos.FCFS;
+import algoritmos.HRRN;
+import algoritmos.RR;
+import algoritmos.SRT;
+import algoritmos.SJF;
+//import algoritmos.SRR;
+import algoritmos.Algoritmo;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -61,6 +69,10 @@ public class Controlador {
     private AdmnistradorProgramasNuevos AdministradorProgramas;
     private BUS2 BUSAsignado;
     private GestorProcesos Gestor;
+    private BUSModelo2 bus;
+    private final ColaProcesos colaListos = new ColaProcesos(); // cola de listos
+    private Thread hiloPlanificador;                       // para HRRN/RR/SJF/SRT
+    private FCFS fcfs;   
 
     public Controlador(){
         AdministradorProgramas = null;
@@ -86,6 +98,73 @@ public class Controlador {
         AdministradorProgramas = new AdmnistradorProgramasNuevos(nombresProgramas, direccionesProgramas, bus);
         BUSAsignado = bus;
         Gestor = new GestorProcesos(planificador);
+        // guarda bus en campo, lo usan los algoritmos
+        this.bus = new BUSModelo2(almacenamiento);
+        cpu.AsignarBUS(this.bus);
+
+        // === Selección de algoritmo ===
+        final long QUANTUM_DEF = 3; // quantum
+
+        // apaga planificador anterior si existe
+        if (hiloPlanificador != null && hiloPlanificador.isAlive()) {
+            hiloPlanificador.interrupt();
+            hiloPlanificador = null;
+        }
+        fcfs = null;
+
+        switch (algoritmo) {
+            case 0: { // FCFS
+                fcfs = new FCFS(colaListos, /*cantidadCPUs*/ 1);
+                fcfs.AsignarBUS(this.bus);
+                fcfs.IniciarEjecucion();                 // crea CPUs internas y lanza el planificador
+                System.out.println("FCFS iniciado");
+                break;
+            }
+            case 1: { // SRT
+                SRT srt = new SRT(colaListos, this.bus);
+                srt.IniciarEjecucion();
+                hiloPlanificador = srt;
+                System.out.println("SRT iniciado");
+                break;
+            }
+            case 2: { // SJF
+                SJF sjf = new SJF(this.bus);
+                sjf.start();              // SJF extiende Thread
+                hiloPlanificador = sjf;
+                System.out.println("SJF iniciado");
+                break;
+            }
+            case 3: { // RR
+                RR rr = new RR(colaListos, this.bus, QUANTUM_DEF);
+                rr.IniciarEjecucion();
+                hiloPlanificador = rr;
+                System.out.println(" RR iniciado (q=" + QUANTUM_DEF + ")");
+                break;
+            }
+            case 4: { // HRRN
+                HRRN hrrn = new HRRN(colaListos, this.bus);
+                hrrn.IniciarEjecucion();
+                hiloPlanificador = hrrn;
+                System.out.println(" HRRN iniciado");
+                break;
+            }
+            case 5: { // SRR
+                // SRR srr = new SRR(colaListos, this.bus, QUANTUM_DEF);
+                // srr.IniciarEjecucion();
+                // hiloPlanificador = srr;
+                // System.out.println("[CTRL] SRR iniciado");
+                System.out.println("[CTRL] SRR no implementado aún; usando FCFS por defecto");
+                fcfs = new FCFS(colaListos, 1);
+                fcfs.AsignarBUS(this.bus);
+                fcfs.IniciarEjecucion();
+                break;
+            }
+            default: {
+                fcfs = new FCFS(colaListos, 1);
+                fcfs.AsignarBUS(this.bus);
+                fcfs.IniciarEjecucion();
+            }
+        }
     }
 
     /**
