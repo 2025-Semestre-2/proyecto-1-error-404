@@ -30,7 +30,6 @@ import com.sistemasoperativos.pcvirtual.instrucciones.Sub;
 import com.sistemasoperativos.pcvirtual.instrucciones.Swap;
 import com.sistemasoperativos.pcvirtual.instrucciones.CMP;
 import com.sistemasoperativos.pcvirtual.instrucciones.Param;
-import com.sistemasoperativos.pcvirtual.procesos.BCP;
 import com.sistemasoperativos.pcvirtual.procesos.GestorProcesos;
 import com.sistemasoperativos.pcvirtual.procesos.ColaProcesos;
 import algoritmos.FCFS;
@@ -40,6 +39,9 @@ import algoritmos.SRT;
 import algoritmos.SJF;
 //import algoritmos.SRR;
 import algoritmos.Algoritmo;
+import cargadadoresprogramas.Cargador;
+import cargadadoresprogramas.Dinamica;
+import cargadadoresprogramas.Fija;
 
 import java.io.File;
 import java.util.HashMap;
@@ -78,29 +80,50 @@ public class Controlador {
         AdministradorProgramas = null;
     }
 
-    public void CrearPC(int tamanoRAM, int tamanoAlmacenamiento, int tipoCargador, int algoritmo) throws Exception{
+    public void CrearPC(int cantidadCPU, int tamanoRAM, int tamanoAlmacenamiento, int tipoCargador, int algoritmo) throws Exception{
         System.out.println("Creando PC...");
         int direccionEscrituraAlmacenamiento = 0;
         Conversor conversor = new Conversor();
         RAM ram = new RAMModelo1(tamanoRAM);
         Almacenamiento almacenamiento = new AlmacenamientoModelo1(
             tamanoAlmacenamiento, conversor, direccionEscrituraAlmacenamiento);
-        Map<String, Instruccion> instrucciones = new HashMap<>();
-        Map<String, String> registros = CrearRegistros();
-        CPU cpu = new CPUModelo2(instrucciones, registros);
         LinkedList<String> direccionesProgramas = new LinkedList();
         LinkedList<String> nombresProgramas = new LinkedList();
         Algoritmo planificador = null;
-        BUS2 bus = new BUSModelo2(almacenamiento);
-        cpu.AsignarBUS(bus);
+        bus = new BUSModelo2(almacenamiento);
+        bus.AsignarRAM(ram);
         BUSPantalla busPantalla = new BUSPantallaModelo1(this);
-        CrearInstrucciones(instrucciones, bus, conversor, busPantalla);
         AdministradorProgramas = new AdmnistradorProgramasNuevos(nombresProgramas, direccionesProgramas, bus);
         BUSAsignado = bus;
         Gestor = new GestorProcesos(planificador);
+        //Crear los CPUs
+        for(int cantidadCreada = 0; cantidadCreada < cantidadCPU; cantidadCreada++){
+            Conversor conversorInstrucciones = new Conversor();
+            Map<String, Instruccion> instruccionesCPU = CrearInstrucciones(conversorInstrucciones, busPantalla);
+            Map<String, String> registros = CrearRegistros();
+            CPU cpu = new CPUModelo2(instruccionesCPU, registros);
+            bus.AsignarCPU(cpu);
+        }
+        //Crear el algoritmo escogido
+        Cargador cargador = null;
+        switch(tipoCargador){
+            case 1:
+                cargador = new Fija(50, tamanoRAM, almacenamiento, bus, direccionesProgramas);
+                break;
+            case 2:
+                cargador = new Dinamica(tamanoRAM, almacenamiento, bus, direccionesProgramas);
+                break;
+            case 3:
+                cargador = new Fija(50, tamanoRAM, almacenamiento, bus, direccionesProgramas);
+                break;
+            case 4:
+                cargador = new Fija(50, tamanoRAM, almacenamiento, bus, direccionesProgramas);
+                break;
+            default:
+                cargador = new Fija(50, tamanoRAM, almacenamiento, bus, direccionesProgramas);
+        }
         // guarda bus en campo, lo usan los algoritmos
         this.bus = new BUSModelo2(almacenamiento);
-        cpu.AsignarBUS(this.bus);
 
         // === Selección de algoritmo ===
         final long QUANTUM_DEF = 3; // quantum
@@ -165,6 +188,7 @@ public class Controlador {
                 fcfs.IniciarEjecucion();
             }
         }
+        
     }
 
     /**
@@ -223,8 +247,8 @@ public class Controlador {
      *
      * @param instrucciones mapa a llenar (clave: mnemonico, valor: instancia)
      */
-    private void CrearInstrucciones(Map<String, Instruccion> instrucciones, BUS2 bus,
-            Conversor conversor, BUSPantalla busPantalla){
+    private Map<String, Instruccion> CrearInstrucciones(Conversor conversor, BUSPantalla busPantalla){
+        Map<String, Instruccion> instrucciones = new HashMap<>();
         instrucciones.put("00000", new Load(conversor, 1, bus)); // LOAD
         instrucciones.put("00001", new Store(conversor, 1, bus)); // STORE
         instrucciones.put("00010", new Mov(conversor, 1)); // MOV
@@ -241,6 +265,7 @@ public class Controlador {
         instrucciones.put("01101", new Param(conversor, 1, bus)); // PARAM
         instrucciones.put("01110", new Push(conversor, 1, bus)); // PUSH
         instrucciones.put("01111", new Pop(conversor, 1, bus)); // POP
+        return instrucciones;
     }
     
     public void EjecutarInstruccion() throws Exception{

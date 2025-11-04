@@ -29,7 +29,7 @@ public class CrearPCDialog extends Dialog<ConfigPC> {
         getDialogPane().getButtonTypes().addAll(btCrear, ButtonType.CANCEL);
 
         // --- Campos de texto ---
-        TextField tfRam   = new TextField("512");
+        TextField tfRam   = new TextField("1024");
         TextField tfDisco = new TextField("8192");
 
         tfRam.setPromptText("RAM (MB)");
@@ -49,6 +49,10 @@ public class CrearPCDialog extends Dialog<ConfigPC> {
                 "Dinámica (F/V)"
         );
         cbAlgoritmoMemoria.setValue("Paginación (F/V)");
+        
+        ComboBox<String> cbCantidadCPUs = new ComboBox<>();
+        cbCantidadCPUs.getItems().addAll("1", "2", "3", "4");
+        cbCantidadCPUs.setValue("1");
 
         // --- Layout ---
         GridPane grid = new GridPane();
@@ -60,6 +64,7 @@ public class CrearPCDialog extends Dialog<ConfigPC> {
         grid.addRow(1, new Label("Almacenamiento (MB):"), tfDisco);
         grid.addRow(2, new Label("Algoritmo CPU:"), cbAlgoritmoCPU);
         grid.addRow(3, new Label("Algoritmo Memoria:"), cbAlgoritmoMemoria);
+        grid.addRow(4, new Label("Cantidad de CPUs:"), cbCantidadCPUs);
 
         getDialogPane().setContent(grid);
 
@@ -86,16 +91,17 @@ public class CrearPCDialog extends Dialog<ConfigPC> {
                 }
                 int cargadorSeleccionado = 0;
                 switch(algoritmoMemoria){
-                    case "Paginación (F/V)": 
+                    case "Paginación (F/V)": cargadorSeleccionado = 1;
                         break;
-                    case "Segmentación (F)": 
+                    case "Segmentación (F)": cargadorSeleccionado = 2;
                         break;
-                    case "Fija (F/V)": 
+                    case "Fija (F/V)": cargadorSeleccionado = 3;
                         break;
-                    case "Dinámica (F/V)": 
+                    case "Dinámica (F/V)": cargadorSeleccionado = 4;
                         break;
                 }
-                controlador.CrearPC(ram, disco, cargadorSeleccionado, algoritmoSeleccionado);
+                int cantidadCPUs = Integer.parseInt(cbCantidadCPUs.getValue());
+                controlador.CrearPC(cantidadCPUs, ram, disco, cargadorSeleccionado, algoritmoSeleccionado);
                 System.out.println("Algoritmo CPU: " + algoritmoCPU);
                 System.out.println("Algoritmo Memoria: " + algoritmoMemoria);
 
